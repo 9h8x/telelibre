@@ -1,0 +1,2092 @@
+[
+  {
+    "number": 119,
+    "displayName": "Canal 9 Litoral.",
+    "title": "Canal 9 Litoral.",
+    "name": "Canal 9 Litoral",
+    "titles": {
+      "EN": "Canal 9 Litoral.",
+      "ES": "Canal 9 Litoral."
+    },
+    "logoUrl": "/image/40377495",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/hub/canal9-litoral/canal9-litoral.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/hub/canal9-litoral/canal9-litoral.mpd"
+    },
+    "imageUrl": "/image/40377495",
+    "fetchLogoUrl": "/sb/image/40377495",
+    "id": 100025
+  },
+  {
+    "number": 209,
+    "displayName": "America TV",
+    "title": "America TV",
+    "name": "America TV",
+    "titles": {
+      "EN": "America TV",
+      "ES": "America TV"
+    },
+    "logoUrl": "/image/5809896",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/americahls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/america/output.mpd"
+    },
+    "imageUrl": "/image/5809896",
+    "fetchLogoUrl": "/sb/image/5809896",
+    "id": 2
+  },
+  {
+    "number": 210,
+    "displayName": "Telefe",
+    "title": "Telefe",
+    "name": "Telefe",
+    "titles": {
+      "EN": "Telefe",
+      "ES": "Telefe"
+    },
+    "logoUrl": "/image/196607",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/F8b6hUrSMDxGpcmJPsTnCvAR7tywBzV3d_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/F8b6hUrSMDxGpcmJPsTnCvAR7tywBzV3d/output.mpd"
+    },
+    "imageUrl": "/image/196607",
+    "fetchLogoUrl": "/sb/image/196607",
+    "id": 4
+  },
+  {
+    "number": 211,
+    "displayName": "TV Publica",
+    "title": "TV Publica",
+    "name": "TV Publica",
+    "titles": {
+      "EN": "TV Publica",
+      "ES": "TV Publica"
+    },
+    "logoUrl": "/image/5809908",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/zk5UyaWV3PEvXQdb7T4MuwCANBch8rG2g_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/zk5UyaWV3PEvXQdb7T4MuwCANBch8rG2g/output.mpd"
+    },
+    "imageUrl": "/image/5809908",
+    "fetchLogoUrl": "/sb/image/5809908",
+    "id": 5
+  },
+  {
+    "number": 212,
+    "displayName": "El Trece",
+    "title": "El Trece",
+    "name": "El Trece",
+    "titles": {
+      "EN": "El Trece",
+      "ES": "El Trece"
+    },
+    "logoUrl": "/image/196599",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/el13_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/el13/output.mpd"
+    },
+    "imageUrl": "/image/196599",
+    "fetchLogoUrl": "/sb/image/196599",
+    "id": 6
+  },
+  {
+    "number": 213,
+    "displayName": "El Nueve",
+    "title": "El Nueve",
+    "name": "El Nueve",
+    "titles": {
+      "EN": "El Nueve",
+      "ES": "El Nueve"
+    },
+    "logoUrl": "/image/49911721",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/elnueve_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/elnueve/output.mpd"
+    },
+    "imageUrl": "/image/49911721",
+    "fetchLogoUrl": "/sb/image/49911721",
+    "id": 3
+  },
+  {
+    "number": 214,
+    "displayName": "TN",
+    "title": "TN",
+    "name": "TN",
+    "titles": {
+      "EN": "TN",
+      "ES": "TN"
+    },
+    "logoUrl": "/image/196657",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/tn_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/tn/output.mpd"
+    },
+    "imageUrl": "/image/196657",
+    "fetchLogoUrl": "/sb/image/196657",
+    "id": 79
+  },
+  {
+    "number": 215,
+    "displayName": "A24",
+    "title": "A24",
+    "name": "A24",
+    "titles": {
+      "EN": "A24",
+      "ES": "A24"
+    },
+    "logoUrl": "/image/31210635",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/a24_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/a24/output.mpd"
+    },
+    "imageUrl": "/image/31210635",
+    "fetchLogoUrl": "/sb/image/31210635",
+    "id": 11
+  },
+  {
+    "number": 216,
+    "displayName": "C5N",
+    "title": "C5N",
+    "name": "C5N",
+    "titles": {
+      "EN": "C5N",
+      "ES": "C5N"
+    },
+    "logoUrl": "/image/196606",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/c5n_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/c5n/output.mpd"
+    },
+    "imageUrl": "/image/196606",
+    "fetchLogoUrl": "/sb/image/196606",
+    "id": 7
+  },
+  {
+    "number": 217,
+    "displayName": "Cronica TV",
+    "title": "Cronica TV",
+    "name": "Cronica TV",
+    "titles": {
+      "EN": "Cronica TV",
+      "ES": "Cronica TV"
+    },
+    "logoUrl": "/image/49911724",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/cronica_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/cronica/output.mpd"
+    },
+    "imageUrl": "/image/49911724",
+    "fetchLogoUrl": "/sb/image/49911724",
+    "id": 9
+  },
+  {
+    "number": 218,
+    "displayName": "Canal 26",
+    "title": "Canal 26",
+    "name": "Canal 26",
+    "titles": {
+      "EN": "Canal 26",
+      "ES": "Canal 26"
+    },
+    "logoUrl": "/image/196617",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/canal26_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/canal26/output.mpd"
+    },
+    "imageUrl": "/image/196617",
+    "fetchLogoUrl": "/sb/image/196617",
+    "id": 12
+  },
+  {
+    "number": 219,
+    "displayName": "IP Noticias",
+    "title": "IP Noticias",
+    "name": "IP Noticias",
+    "titles": {
+      "EN": "IP Noticias",
+      "ES": "IP Noticias"
+    },
+    "logoUrl": "/image/38703593",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/ip_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/ip/output.mpd"
+    },
+    "imageUrl": "/image/38703593",
+    "fetchLogoUrl": "/sb/image/38703593",
+    "id": 179
+  },
+  {
+    "number": 220,
+    "displayName": "LN +",
+    "title": "LN +",
+    "name": "LN +",
+    "titles": {
+      "EN": "LN +",
+      "ES": "LN +"
+    },
+    "logoUrl": "/image/19326308",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/lnmas_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/lnmas/output.mpd"
+    },
+    "imageUrl": "/image/19326308",
+    "fetchLogoUrl": "/sb/image/19326308",
+    "id": 8
+  },
+  {
+    "number": 221,
+    "displayName": "CN 23",
+    "title": "CN 23",
+    "name": "CN 23",
+    "titles": {
+      "EN": "CN 23",
+      "ES": "CN 23"
+    },
+    "logoUrl": "/image/38703594",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/cn23_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/cn23/output.mpd"
+    },
+    "imageUrl": "/image/38703594",
+    "fetchLogoUrl": "/sb/image/38703594",
+    "id": 10
+  },
+  {
+    "number": 222,
+    "displayName": "Encuentro",
+    "title": "Encuentro",
+    "name": "Encuentro",
+    "titles": {
+      "EN": "Encuentro",
+      "ES": "Encuentro"
+    },
+    "logoUrl": "/image/38387661",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/encuentro_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/encuentro/output.mpd"
+    },
+    "imageUrl": "/image/38387661",
+    "fetchLogoUrl": "/sb/image/38387661",
+    "id": 13
+  },
+  {
+    "number": 223,
+    "displayName": "Tec TV",
+    "title": "Tec TV",
+    "name": "Tec TV",
+    "titles": {
+      "EN": "Tec TV",
+      "ES": "Tec TV"
+    },
+    "logoUrl": "/image/49911739",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/tecnopolis_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/tecnopolis/output.mpd"
+    },
+    "imageUrl": "/image/49911739",
+    "fetchLogoUrl": "/sb/image/49911739",
+    "id": 14
+  },
+  {
+    "number": 225,
+    "displayName": "Construir",
+    "title": "Construir",
+    "name": "Construir",
+    "titles": {
+      "EN": "Construir",
+      "ES": "Construir"
+    },
+    "logoUrl": "/image/196715",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/construiriptv_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/construiriptv/output.mpd"
+    },
+    "imageUrl": "/image/196715",
+    "fetchLogoUrl": "/sb/image/196715",
+    "id": 15
+  },
+  {
+    "number": 300,
+    "displayName": "DeporTv",
+    "title": "DeporTv",
+    "name": "DeporTv",
+    "titles": {
+      "EN": "DeporTv",
+      "ES": "DeporTv"
+    },
+    "logoUrl": "/image/49911749",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/dxtv_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/dxtv/output.mpd"
+    },
+    "imageUrl": "/image/49911749",
+    "fetchLogoUrl": "/sb/image/49911749",
+    "id": 22
+  },
+  {
+    "number": 301,
+    "displayName": "TyC Sports HD",
+    "title": "TyC Sports HD",
+    "name": "TyC Sports HD",
+    "titles": {
+      "EN": "TyC Sports HD",
+      "ES": "TyC Sports HD"
+    },
+    "logoUrl": "/image/51595714",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/dMSARNZkX6ftWzYeC85BxPEKGnLhym9Vc_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/dMSARNZkX6ftWzYeC85BxPEKGnLhym9Vc/output.mpd"
+    },
+    "imageUrl": "/image/51595714",
+    "fetchLogoUrl": "/sb/image/51595714",
+    "id": 52
+  },
+  {
+    "number": 302,
+    "displayName": "ESPN",
+    "title": "ESPN",
+    "name": "ESPN",
+    "titles": {
+      "EN": "ESPN",
+      "ES": "ESPN"
+    },
+    "logoUrl": "/image/48583124",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/GZ8fPKhw3d6a2MRzxcStkJvYLeDVTbXNj_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/GZ8fPKhw3d6a2MRzxcStkJvYLeDVTbXNj/output.mpd"
+    },
+    "imageUrl": "/image/48583124",
+    "fetchLogoUrl": "/sb/image/48583124",
+    "id": 263
+  },
+  {
+    "number": 303,
+    "displayName": "ESPN 2",
+    "title": "ESPN 2",
+    "name": "ESPN 2",
+    "titles": {
+      "EN": "ESPN 2",
+      "ES": "ESPN 2"
+    },
+    "logoUrl": "/image/48583128",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/sJDmPFpTWBNS2gZhzj8ydHU7tR9Y6uf4k_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/sJDmPFpTWBNS2gZhzj8ydHU7tR9Y6uf4k/output.mpd"
+    },
+    "imageUrl": "/image/48583128",
+    "fetchLogoUrl": "/sb/image/48583128",
+    "id": 264
+  },
+  {
+    "number": 304,
+    "displayName": "ESPN 3",
+    "title": "ESPN 3",
+    "name": "ESPN 3",
+    "titles": {
+      "EN": "ESPN 3",
+      "ES": "ESPN 3"
+    },
+    "logoUrl": "/image/48583129",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/QVsZxnupYwKdAtb5Dk3zvFXBMGqcWgmfR_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/QVsZxnupYwKdAtb5Dk3zvFXBMGqcWgmfR/output.mpd"
+    },
+    "imageUrl": "/image/48583129",
+    "fetchLogoUrl": "/sb/image/48583129",
+    "id": 265
+  },
+  {
+    "number": 305,
+    "displayName": "ESPN 4",
+    "title": "ESPN 4",
+    "name": "ESPN 4",
+    "titles": {
+      "EN": "ESPN 4",
+      "ES": "ESPN 4"
+    },
+    "logoUrl": "/image/48583127",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/bPHSdXgELpUR4JkCe3Qu5mV6zn8qMwjTY_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/bPHSdXgELpUR4JkCe3Qu5mV6zn8qMwjTY/output.mpd"
+    },
+    "imageUrl": "/image/48583127",
+    "fetchLogoUrl": "/sb/image/48583127",
+    "id": 267
+  },
+  {
+    "number": 306,
+    "displayName": "FOX Sports HD",
+    "title": "FOX Sports HD",
+    "name": "FOX Sports HD",
+    "titles": {
+      "EN": "FOX Sports HD",
+      "ES": "FOX Sports HD"
+    },
+    "logoUrl": "/image/21773657",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/ENMPbUCc5y3tahrqsRDuZFz4Hf62KGQLB_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/ENMPbUCc5y3tahrqsRDuZFz4Hf62KGQLB/output.mpd"
+    },
+    "imageUrl": "/image/21773657",
+    "fetchLogoUrl": "/sb/image/21773657",
+    "id": 51
+  },
+  {
+    "number": 307,
+    "displayName": "FOX Sports 2",
+    "title": "FOX Sports 2",
+    "name": "FOX SPORTS 2",
+    "titles": {
+      "EN": "FOX Sports 2",
+      "ES": "FOX Sports 2"
+    },
+    "logoUrl": "/image/38387677",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/YTBPx3ZQCwrDXNudJAFzkhLmEen2j94pU_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/YTBPx3ZQCwrDXNudJAFzkhLmEen2j94pU/output.mpd"
+    },
+    "imageUrl": "/image/38387677",
+    "fetchLogoUrl": "/sb/image/38387677",
+    "id": 275
+  },
+  {
+    "number": 308,
+    "displayName": "FOX Sports 3",
+    "title": "FOX Sports 3",
+    "name": "FOX Sports 3",
+    "titles": {
+      "EN": "FOX Sports 3",
+      "ES": "FOX Sports 3"
+    },
+    "logoUrl": "/image/38387676",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/zrGB5jxs4VLbqCw8eQkEDWYHU7tvfhuZR_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/zrGB5jxs4VLbqCw8eQkEDWYHU7tvfhuZR/output.mpd"
+    },
+    "imageUrl": "/image/38387676",
+    "fetchLogoUrl": "/sb/image/38387676",
+    "id": 276
+  },
+  {
+    "number": 309,
+    "displayName": "El Garage",
+    "title": "El Garage",
+    "name": "El Garage",
+    "titles": {
+      "EN": "El Garage",
+      "ES": "El Garage"
+    },
+    "logoUrl": "/image/49911735",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/garage_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/garage/output.mpd"
+    },
+    "imageUrl": "/image/49911735",
+    "fetchLogoUrl": "/sb/image/49911735",
+    "id": 140
+  },
+  {
+    "number": 311,
+    "displayName": "Golf Channel",
+    "title": "Golf Channel",
+    "name": "Golf Channel",
+    "titles": {
+      "ES": "Golf Channel"
+    },
+    "logoUrl": "/image/53297419",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/golf_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/golf/output.mpd"
+    },
+    "imageUrl": "/image/53297419",
+    "fetchLogoUrl": "/sb/image/53297419",
+    "id": 510
+  },
+  {
+    "number": 312,
+    "displayName": "Discovery Turbo",
+    "title": "Discovery Turbo",
+    "name": "Discovery Turbo",
+    "titles": {
+      "EN": "Discovery Turbo",
+      "ES": "Discovery Turbo"
+    },
+    "logoUrl": "/image/53297413",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/dsc_turbo_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/dsc_turbo/output.mpd"
+    },
+    "imageUrl": "/image/53297413",
+    "fetchLogoUrl": "/sb/image/53297413",
+    "id": 500
+  },
+  {
+    "number": 323,
+    "displayName": "ESPN Premium",
+    "title": "ESPN Premium",
+    "name": "ESPN PREMIUM",
+    "titles": {
+      "EN": "ESPN Premium",
+      "ES": "ESPN Premium"
+    },
+    "logoUrl": "/image/49911746",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/XwFUMd8DqaytNr75E3bzVKsncp26HuWxf_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/XwFUMd8DqaytNr75E3bzVKsncp26HuWxf/output.mpd"
+    },
+    "imageUrl": "/image/49911746",
+    "fetchLogoUrl": "/sb/image/49911746",
+    "id": 811
+  },
+  {
+    "number": 324,
+    "displayName": "TNT Sports Argentina",
+    "title": "TNT Sports Argentina",
+    "name": "TNT Sports Argentina",
+    "titles": {
+      "EN": "TNT Sports Argentina",
+      "ES": "TNT Sports Argentina"
+    },
+    "logoUrl": "/image/48583138",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/HnhM8Rq4vmY7A2dUEGCcyP5WbkgeBJ9Sa_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/HnhM8Rq4vmY7A2dUEGCcyP5WbkgeBJ9Sa/output.mpd"
+    },
+    "imageUrl": "/image/48583138",
+    "fetchLogoUrl": "/sb/image/48583138",
+    "id": 810
+  },
+  {
+    "number": 400,
+    "displayName": "Paka Paka",
+    "title": "Paka Paka",
+    "name": "Paka Paka",
+    "titles": {
+      "EN": "Paka Paka",
+      "ES": "Paka Paka"
+    },
+    "logoUrl": "/image/49911750",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/pkpk_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/pkpk/output.mpd"
+    },
+    "imageUrl": "/image/49911750",
+    "fetchLogoUrl": "/sb/image/49911750",
+    "id": 23
+  },
+  {
+    "number": 401,
+    "displayName": "Disney Channel",
+    "title": "Disney Channel",
+    "name": "Disney Channel",
+    "titles": {
+      "EN": "Disney Channel",
+      "ES": "Disney Channel"
+    },
+    "logoUrl": "/image/49911752",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/disney_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/disney/output.mpd"
+    },
+    "imageUrl": "/image/49911752",
+    "fetchLogoUrl": "/sb/image/49911752",
+    "id": 260
+  },
+  {
+    "number": 402,
+    "displayName": "Nick",
+    "title": "Nick",
+    "name": "Nick",
+    "titles": {
+      "ES": "Nick"
+    },
+    "logoUrl": "/image/49911754",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/nickelodeon_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/nickelodeon/output.mpd"
+    },
+    "imageUrl": "/image/49911754",
+    "fetchLogoUrl": "/sb/image/49911754",
+    "id": 32
+  },
+  {
+    "number": 403,
+    "displayName": "Cartoon Network",
+    "title": "Cartoon Network",
+    "name": "Cartoon Network",
+    "titles": {
+      "EN": "Cartoon Network",
+      "ES": "Cartoon Network"
+    },
+    "logoUrl": "/image/49911759",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/cartoon_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/cartoon/output.mpd"
+    },
+    "imageUrl": "/image/49911759",
+    "fetchLogoUrl": "/sb/image/49911759",
+    "id": 243
+  },
+  {
+    "number": 405,
+    "displayName": "Discovery Kids",
+    "title": "Discovery Kids",
+    "name": "Discovery Kids",
+    "titles": {
+      "EN": "Discovery Kids",
+      "ES": "Discovery Kids"
+    },
+    "logoUrl": "/image/49911762",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/disc_kids_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/disc_kids/output.mpd"
+    },
+    "imageUrl": "/image/49911762",
+    "fetchLogoUrl": "/sb/image/49911762",
+    "id": 504
+  },
+  {
+    "number": 406,
+    "displayName": "Cartoonito",
+    "title": "Cartoonito",
+    "name": "Cartoonito",
+    "titles": {
+      "EN": "Cartoonito",
+      "ES": "Cartoonito"
+    },
+    "logoUrl": "/image/49911765",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/boomerang_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/boomerang/output.mpd"
+    },
+    "imageUrl": "/image/49911765",
+    "fetchLogoUrl": "/sb/image/49911765",
+    "id": 242
+  },
+  {
+    "number": 409,
+    "displayName": "Tooncast",
+    "title": "Tooncast",
+    "name": "Tooncast",
+    "titles": {
+      "EN": "Tooncast",
+      "ES": "Tooncast"
+    },
+    "logoUrl": "/image/51595711",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/tooncast_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/tooncast/output.mpd"
+    },
+    "imageUrl": "/image/51595711",
+    "fetchLogoUrl": "/sb/image/51595711",
+    "id": 244
+  },
+  {
+    "number": 410,
+    "displayName": "Nick Jr.",
+    "title": "Nick Jr.",
+    "name": "Nick Jr.",
+    "titles": {
+      "ES": "Nick Jr."
+    },
+    "logoUrl": "/image/49911757",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/nickjr_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/nickjr/output.mpd"
+    },
+    "imageUrl": "/image/49911757",
+    "fetchLogoUrl": "/sb/image/49911757",
+    "id": 33
+  },
+  {
+    "number": 413,
+    "displayName": "Disney Junior",
+    "title": "Disney Junior",
+    "name": "Disney Junior",
+    "titles": {
+      "EN": "Disney Junior",
+      "ES": "Disney Junior"
+    },
+    "logoUrl": "/image/45807873",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/disneyjr_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/disneyjr/output.mpd"
+    },
+    "imageUrl": "/image/45807873",
+    "fetchLogoUrl": "/sb/image/45807873",
+    "id": 262
+  },
+  {
+    "number": 414,
+    "displayName": "Baby Tv",
+    "title": "Baby Tv",
+    "name": "Baby Tv",
+    "titles": {
+      "EN": "Baby Tv",
+      "ES": "Baby Tv"
+    },
+    "logoUrl": "/image/1908637",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/babytv_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/babytv/output.mpd"
+    },
+    "imageUrl": "/image/1908637",
+    "fetchLogoUrl": "/sb/image/1908637",
+    "id": 273
+  },
+  {
+    "number": 500,
+    "displayName": "CINE.AR",
+    "title": "CINE.AR",
+    "name": "CINE.AR",
+    "titles": {
+      "EN": "CINE.AR",
+      "ES": "CINE.AR"
+    },
+    "logoUrl": "/image/196594",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/cinear_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/cinear/output.mpd"
+    },
+    "imageUrl": "/image/196594",
+    "fetchLogoUrl": "/sb/image/196594",
+    "id": 18
+  },
+  {
+    "number": 504,
+    "displayName": "Space",
+    "title": "Space",
+    "name": "Space",
+    "titles": {
+      "EN": "Space",
+      "ES": "Space"
+    },
+    "logoUrl": "/image/196669",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/space_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/space/output.mpd"
+    },
+    "imageUrl": "/image/196669",
+    "fetchLogoUrl": "/sb/image/196669",
+    "id": 247
+  },
+  {
+    "number": 505,
+    "displayName": "Cinecanal",
+    "title": "Cinecanal",
+    "name": "Cinecanal",
+    "titles": {
+      "EN": "Cinecanal",
+      "ES": "Cinecanal"
+    },
+    "logoUrl": "/image/49911769",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/cinecanal_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/cinecanal/output.mpd"
+    },
+    "imageUrl": "/image/49911769",
+    "fetchLogoUrl": "/sb/image/49911769",
+    "id": 272
+  },
+  {
+    "number": 506,
+    "displayName": "TNT",
+    "title": "TNT",
+    "name": "TNT",
+    "titles": {
+      "EN": "TNT Series",
+      "ES": "TNT"
+    },
+    "logoUrl": "/image/51768317",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/tnt_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/tnt/output.mpd"
+    },
+    "imageUrl": "/image/51768317",
+    "fetchLogoUrl": "/sb/image/51768317",
+    "id": 245
+  },
+  {
+    "number": 507,
+    "displayName": "TNT Series",
+    "title": "TNT Series",
+    "name": "TNT Series",
+    "titles": {
+      "EN": "TNT Series",
+      "ES": "TNT Series"
+    },
+    "logoUrl": "/image/49911777",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/tntseries_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/tntseries/output.mpd"
+    },
+    "imageUrl": "/image/49911777",
+    "fetchLogoUrl": "/sb/image/49911777",
+    "id": 246
+  },
+  {
+    "number": 508,
+    "displayName": "FX",
+    "title": "FX",
+    "name": "FX",
+    "titles": {
+      "ES": "FX"
+    },
+    "logoUrl": "/image/196602",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/fx_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/fx/output.mpd"
+    },
+    "imageUrl": "/image/196602",
+    "fetchLogoUrl": "/sb/image/196602",
+    "id": 30
+  },
+  {
+    "number": 509,
+    "displayName": "Star Channel",
+    "title": "Star Channel",
+    "name": "Star Channel",
+    "titles": {
+      "EN": "Star Channel",
+      "ES": "Star Channel"
+    },
+    "logoUrl": "/image/49945571",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/foxhd_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/foxhd/output.mpd"
+    },
+    "imageUrl": "/image/49945571",
+    "fetchLogoUrl": "/sb/image/49945571",
+    "id": 37
+  },
+  {
+    "number": 510,
+    "displayName": "Sony",
+    "title": "Sony",
+    "name": "Sony",
+    "titles": {
+      "EN": "Sony",
+      "ES": "Sony"
+    },
+    "logoUrl": "/image/196698",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/sony_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/sony/output.mpd"
+    },
+    "imageUrl": "/image/196698",
+    "fetchLogoUrl": "/sb/image/196698",
+    "id": 289
+  },
+  {
+    "number": 511,
+    "displayName": "Warner",
+    "title": "Warner",
+    "name": "Warner",
+    "titles": {
+      "ES": "Warner"
+    },
+    "logoUrl": "/image/196672",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/warner_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/warner/output.mpd"
+    },
+    "imageUrl": "/image/196672",
+    "fetchLogoUrl": "/sb/image/196672",
+    "id": 45
+  },
+  {
+    "number": 513,
+    "displayName": "AXN",
+    "title": "AXN",
+    "name": "AXN",
+    "titles": {
+      "EN": "AXN",
+      "ES": "AXN"
+    },
+    "logoUrl": "/image/27799994",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/axn_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/axn/output.mpd"
+    },
+    "imageUrl": "/image/27799994",
+    "fetchLogoUrl": "/sb/image/27799994",
+    "id": 290
+  },
+  {
+    "number": 514,
+    "displayName": "USA Network",
+    "title": "USA Network",
+    "name": "USA Network",
+    "titles": {
+      "EN": "USA Network",
+      "ES": "USA Network"
+    },
+    "logoUrl": "/image/38663257",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/syfy_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/syfy/output.mpd"
+    },
+    "imageUrl": "/image/38663257",
+    "fetchLogoUrl": "/sb/image/38663257",
+    "id": 517
+  },
+  {
+    "number": 515,
+    "displayName": "A&E",
+    "title": "A&E",
+    "name": "A&E",
+    "titles": {
+      "EN": "A&E",
+      "ES": "A&E"
+    },
+    "logoUrl": "/image/38663258",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/ae_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/ae/output.mpd"
+    },
+    "imageUrl": "/image/38663258",
+    "fetchLogoUrl": "/sb/image/38663258",
+    "id": 288
+  },
+  {
+    "number": 516,
+    "displayName": "Europa Europa",
+    "title": "Europa Europa",
+    "name": "Europa Europa",
+    "titles": {
+      "ES": "Europa Europa"
+    },
+    "logoUrl": "/image/196645",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/europa_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/europa/output.mpd"
+    },
+    "imageUrl": "/image/196645",
+    "fetchLogoUrl": "/sb/image/196645",
+    "id": 48
+  },
+  {
+    "number": 517,
+    "displayName": "TNT Novelas",
+    "title": "TNT Novelas",
+    "name": "TNT Novelas",
+    "titles": {
+      "EN": "TNT Novelas",
+      "ES": "TNT Novelas"
+    },
+    "logoUrl": "/image/49911779",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/tntnovelas_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/tntnovelas/output.mpd"
+    },
+    "imageUrl": "/image/49911779",
+    "fetchLogoUrl": "/sb/image/49911779",
+    "id": 253
+  },
+  {
+    "number": 518,
+    "displayName": "TCM",
+    "title": "TCM",
+    "name": "TCM",
+    "titles": {
+      "EN": "TCM",
+      "ES": "TCM"
+    },
+    "logoUrl": "/image/196647",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/tcm_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/tcm/output.mpd"
+    },
+    "imageUrl": "/image/196647",
+    "fetchLogoUrl": "/sb/image/196647",
+    "id": 248
+  },
+  {
+    "number": 519,
+    "displayName": "AMC",
+    "title": "AMC",
+    "name": "AMC",
+    "titles": {
+      "EN": "AMC",
+      "ES": "AMC"
+    },
+    "logoUrl": "/image/38663259",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/amc_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/amc/output.mpd"
+    },
+    "imageUrl": "/image/38663259",
+    "fetchLogoUrl": "/sb/image/38663259",
+    "id": 160
+  },
+  {
+    "number": 521,
+    "displayName": "Universal",
+    "title": "Universal",
+    "name": "Universal",
+    "titles": {
+      "EN": "Universal",
+      "ES": "Universal"
+    },
+    "logoUrl": "/image/38663261",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/universal_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/universal/output.mpd"
+    },
+    "imageUrl": "/image/38663261",
+    "fetchLogoUrl": "/sb/image/38663261",
+    "id": 515
+  },
+  {
+    "number": 522,
+    "displayName": "Studio Universal",
+    "title": "Studio Universal",
+    "name": "Studio Universal",
+    "titles": {
+      "EN": "Studio Universal",
+      "ES": "Studio Universal"
+    },
+    "logoUrl": "/image/38663260",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/st_universal_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/st_universal/output.mpd"
+    },
+    "imageUrl": "/image/38663260",
+    "fetchLogoUrl": "/sb/image/38663260",
+    "id": 516
+  },
+  {
+    "number": 524,
+    "displayName": "Lifetime",
+    "title": "Lifetime",
+    "name": "Lifetime",
+    "titles": {
+      "EN": "Lifetime",
+      "ES": "Lifetime"
+    },
+    "logoUrl": "/image/49945573",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/lifetime_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/lifetime/output.mpd"
+    },
+    "imageUrl": "/image/49945573",
+    "fetchLogoUrl": "/sb/image/49945573",
+    "id": 513
+  },
+  {
+    "number": 525,
+    "displayName": "Adult Swim",
+    "title": "Adult Swim",
+    "name": "Adult Swim",
+    "titles": {
+      "EN": "Adult Swim",
+      "ES": "Adult Swim"
+    },
+    "logoUrl": "/image/49945580",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/trutv_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/trutv/output.mpd"
+    },
+    "imageUrl": "/image/49945580",
+    "fetchLogoUrl": "/sb/image/49945580",
+    "id": 252
+  },
+  {
+    "number": 526,
+    "displayName": "Comedy Central",
+    "title": "Comedy Central",
+    "name": "Comedy Central",
+    "titles": {
+      "ES": "Comedy Central"
+    },
+    "logoUrl": "/image/196688",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/comedy_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/comedy/output.mpd"
+    },
+    "imageUrl": "/image/196688",
+    "fetchLogoUrl": "/sb/image/196688",
+    "id": 34
+  },
+  {
+    "number": 527,
+    "displayName": "Paramount",
+    "title": "Paramount",
+    "name": "Paramount Channel",
+    "titles": {
+      "EN": "Paramount",
+      "ES": "Paramount"
+    },
+    "logoUrl": "/image/196699",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/paramount_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/paramount/output.mpd"
+    },
+    "imageUrl": "/image/196699",
+    "fetchLogoUrl": "/sb/image/196699",
+    "id": 120
+  },
+  {
+    "number": 547,
+    "displayName": "HBO",
+    "title": "HBO",
+    "name": "HBO",
+    "titles": {
+      "EN": "HBO",
+      "ES": "HBO"
+    },
+    "logoUrl": "/image/10687415",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/hbo_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/hbo/output.mpd"
+    },
+    "imageUrl": "/image/10687415",
+    "fetchLogoUrl": "/sb/image/10687415",
+    "id": 24
+  },
+  {
+    "number": 548,
+    "displayName": "HBO 2",
+    "title": "HBO 2",
+    "name": "HBO 2",
+    "titles": {
+      "EN": "HBO 2",
+      "ES": "HBO 2"
+    },
+    "logoUrl": "/image/10687423",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/hbo2_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/hbo2/output.mpd"
+    },
+    "imageUrl": "/image/10687423",
+    "fetchLogoUrl": "/sb/image/10687423",
+    "id": 66
+  },
+  {
+    "number": 549,
+    "displayName": "HBO Plus",
+    "title": "HBO Plus",
+    "name": "HBO Plus",
+    "titles": {
+      "EN": "HBO Plus",
+      "ES": "HBO Plus"
+    },
+    "logoUrl": "/image/49945582",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/hboplus_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/hboplus/output.mpd"
+    },
+    "imageUrl": "/image/49945582",
+    "fetchLogoUrl": "/sb/image/49945582",
+    "id": 25
+  },
+  {
+    "number": 550,
+    "displayName": "HBO Pop",
+    "title": "HBO Pop",
+    "name": "HBO Pop",
+    "titles": {
+      "EN": "HBO Pop",
+      "ES": "HBO Pop"
+    },
+    "logoUrl": "/image/10687419",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/hbopop_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/hbopop/output.mpd"
+    },
+    "imageUrl": "/image/10687419",
+    "fetchLogoUrl": "/sb/image/10687419",
+    "id": 62
+  },
+  {
+    "number": 551,
+    "displayName": "HBO Family",
+    "title": "HBO Family",
+    "name": "HBO Family",
+    "titles": {
+      "ES": "HBO Family"
+    },
+    "logoUrl": "/image/10687424",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/hbofam_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/hbofam/output.mpd"
+    },
+    "imageUrl": "/image/10687424",
+    "fetchLogoUrl": "/sb/image/10687424",
+    "id": 60
+  },
+  {
+    "number": 552,
+    "displayName": "HBO Xtreme",
+    "title": "HBO Xtreme",
+    "name": "HBO Xtreme",
+    "titles": {
+      "EN": "HBO Xtreme",
+      "ES": "HBO Xtreme"
+    },
+    "logoUrl": "/image/10687421",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/hboxtr_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/hboxtr/output.mpd"
+    },
+    "imageUrl": "/image/10687421",
+    "fetchLogoUrl": "/sb/image/10687421",
+    "id": 64
+  },
+  {
+    "number": 553,
+    "displayName": "HBO Mundi",
+    "title": "HBO Mundi",
+    "name": "HBO Mundi",
+    "titles": {
+      "EN": "HBO Mundi",
+      "ES": "HBO Mundi"
+    },
+    "logoUrl": "/image/10687418",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/hbomund_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/hbomund/output.mpd"
+    },
+    "imageUrl": "/image/10687418",
+    "fetchLogoUrl": "/sb/image/10687418",
+    "id": 61
+  },
+  {
+    "number": 554,
+    "displayName": "HBO Signature",
+    "title": "HBO Signature",
+    "name": "HBO Signature",
+    "titles": {
+      "EN": "HBO Signature",
+      "ES": "HBO Signature"
+    },
+    "logoUrl": "/image/10687420",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/hbosig_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/hbosig/output.mpd"
+    },
+    "imageUrl": "/image/10687420",
+    "fetchLogoUrl": "/sb/image/10687420",
+    "id": 63
+  },
+  {
+    "number": 555,
+    "displayName": "Cinemax",
+    "title": "Cinemax",
+    "name": "Cinemax",
+    "titles": {
+      "EN": "Cinemax",
+      "ES": "Cinemax"
+    },
+    "logoUrl": "/image/49945575",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/cinemax_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/cinemax/output.mpd"
+    },
+    "imageUrl": "/image/49945575",
+    "fetchLogoUrl": "/sb/image/49945575",
+    "id": 65
+  },
+  {
+    "number": 601,
+    "displayName": "El Gourmet",
+    "title": "El Gourmet",
+    "name": "El Gourmet",
+    "titles": {
+      "ES": "El Gourmet"
+    },
+    "logoUrl": "/image/196625",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/gourmet_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/gourmet/output.mpd"
+    },
+    "imageUrl": "/image/196625",
+    "fetchLogoUrl": "/sb/image/196625",
+    "id": 50
+  },
+  {
+    "number": 602,
+    "displayName": "Discovery HGTV",
+    "title": "Discovery HGTV",
+    "name": "Discovery HGTV",
+    "titles": {
+      "EN": "Discovery HGTV",
+      "ES": "Discovery HGTV"
+    },
+    "logoUrl": "/image/38663264",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/dsc_hgtv_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/dsc_hgtv/output.mpd"
+    },
+    "imageUrl": "/image/38663264",
+    "fetchLogoUrl": "/sb/image/38663264",
+    "id": 501
+  },
+  {
+    "number": 603,
+    "displayName": "Food Network",
+    "title": "Food Network",
+    "name": "Food Network",
+    "titles": {
+      "EN": "Food Network",
+      "ES": "Food Network"
+    },
+    "logoUrl": "/image/196651",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/disc_fn_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/disc_fn/output.mpd"
+    },
+    "imageUrl": "/image/196651",
+    "fetchLogoUrl": "/sb/image/196651",
+    "id": 507
+  },
+  {
+    "number": 604,
+    "displayName": "E! Entertainment",
+    "title": "E! Entertainment",
+    "name": "E! Entertainment",
+    "titles": {
+      "EN": "E! Entertainment",
+      "ES": "E! Entertainment"
+    },
+    "logoUrl": "/image/38663265",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/eent_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/eent/output.mpd"
+    },
+    "imageUrl": "/image/38663265",
+    "fetchLogoUrl": "/sb/image/38663265",
+    "id": 259
+  },
+  {
+    "number": 605,
+    "displayName": "Home & Health",
+    "title": "Home & Health",
+    "name": "Discovery Home & Health",
+    "titles": {
+      "EN": "Home & Health",
+      "ES": "Home & Health"
+    },
+    "logoUrl": "/image/38663266",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/disc_hh_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/disc_hh/output.mpd"
+    },
+    "imageUrl": "/image/38663266",
+    "fetchLogoUrl": "/sb/image/38663266",
+    "id": 508
+  },
+  {
+    "number": 606,
+    "displayName": "Mas Chic",
+    "title": "Mas Chic",
+    "name": "Mas Chic",
+    "titles": {
+      "ES": "Mas Chic"
+    },
+    "logoUrl": "/image/196630",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/maschic_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/maschic/output.mpd"
+    },
+    "imageUrl": "/image/196630",
+    "fetchLogoUrl": "/sb/image/196630",
+    "id": 53
+  },
+  {
+    "number": 607,
+    "displayName": "Discovery TLC",
+    "title": "Discovery TLC",
+    "name": "Discovery TLC",
+    "titles": {
+      "EN": "Discovery TLC",
+      "ES": "Discovery TLC"
+    },
+    "logoUrl": "/image/38663267",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/dsc_tlc_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/dsc_tlc/output.mpd"
+    },
+    "imageUrl": "/image/38663267",
+    "fetchLogoUrl": "/sb/image/38663267",
+    "id": 502
+  },
+  {
+    "number": 611,
+    "displayName": "Telemundo",
+    "title": "Telemundo",
+    "name": "Telemundo",
+    "titles": {
+      "EN": "Telemundo",
+      "ES": "Telemundo"
+    },
+    "logoUrl": "/image/1441507",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/telemundo_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/telemundo/output.mpd"
+    },
+    "imageUrl": "/image/1441507",
+    "fetchLogoUrl": "/sb/image/1441507",
+    "id": 514
+  },
+  {
+    "number": 643,
+    "displayName": "Rural",
+    "title": "Rural",
+    "name": "Rural",
+    "titles": {
+      "EN": "Rural",
+      "ES": "Rural"
+    },
+    "logoUrl": "/image/12603391",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/rural_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/rural/output.mpd"
+    },
+    "imageUrl": "/image/12603391",
+    "fetchLogoUrl": "/sb/image/12603391",
+    "id": 104
+  },
+  {
+    "number": 645,
+    "displayName": "Argentinisima Satelital",
+    "title": "Argentinisima Satelital",
+    "name": "Argentinisima Satelital",
+    "titles": {
+      "EN": "Argentinisima Satelital",
+      "ES": "Argentinisima Satelital"
+    },
+    "logoUrl": "/image/53297425",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/arg_sat_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/arg_sat/output.mpd"
+    },
+    "imageUrl": "/image/53297425",
+    "fetchLogoUrl": "/sb/image/53297425",
+    "id": 102
+  },
+  {
+    "number": 650,
+    "displayName": "National Geografic",
+    "title": "National Geografic",
+    "name": "National Geografic",
+    "titles": {
+      "EN": "National Geografic",
+      "ES": "National Geografic"
+    },
+    "logoUrl": "/image/51595718",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/natgeohd_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/natgeohd/output.mpd"
+    },
+    "imageUrl": "/image/51595718",
+    "fetchLogoUrl": "/sb/image/51595718",
+    "id": 268
+  },
+  {
+    "number": 651,
+    "displayName": "Discovery Channel",
+    "title": "Discovery Channel",
+    "name": "Discovery Channel",
+    "titles": {
+      "ES": "Discovery Channel"
+    },
+    "logoUrl": "/image/53297409",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/discovery_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/discovery/output.mpd"
+    },
+    "imageUrl": "/image/53297409",
+    "fetchLogoUrl": "/sb/image/53297409",
+    "id": 35
+  },
+  {
+    "number": 652,
+    "displayName": "Animal Planet",
+    "title": "Animal Planet",
+    "name": "Animal Planet",
+    "titles": {
+      "EN": "Animal Planet",
+      "ES": "Animal Planet"
+    },
+    "logoUrl": "/image/38663269",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/disc_apar_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/disc_apar/output.mpd"
+    },
+    "imageUrl": "/image/38663269",
+    "fetchLogoUrl": "/sb/image/38663269",
+    "id": 509
+  },
+  {
+    "number": 653,
+    "displayName": "Discovery Theater",
+    "title": "Discovery Theater",
+    "name": "Discovery Theater",
+    "titles": {
+      "EN": "Discovery Theater",
+      "ES": "Discovery Theater"
+    },
+    "logoUrl": "/image/53297411",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/disc_theater_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/disc_theater/output.mpd"
+    },
+    "imageUrl": "/image/53297411",
+    "fetchLogoUrl": "/sb/image/53297411",
+    "id": 506
+  },
+  {
+    "number": 654,
+    "displayName": "History Channel",
+    "title": "History Channel",
+    "name": "History Channel",
+    "titles": {
+      "EN": "History Channel",
+      "ES": "History Channel"
+    },
+    "logoUrl": "/image/13941062",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/history_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/history/output.mpd"
+    },
+    "imageUrl": "/image/13941062",
+    "fetchLogoUrl": "/sb/image/13941062",
+    "id": 287
+  },
+  {
+    "number": 655,
+    "displayName": "Discovery I+D",
+    "title": "Discovery I+D",
+    "name": "Discovery I+D Investigation",
+    "titles": {
+      "EN": "Discovery I+D",
+      "ES": "Discovery I+D"
+    },
+    "logoUrl": "/image/6789083",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/disc_idar_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/disc_idar/output.mpd"
+    },
+    "imageUrl": "/image/6789083",
+    "fetchLogoUrl": "/sb/image/6789083",
+    "id": 505
+  },
+  {
+    "number": 657,
+    "displayName": "Film&Arts",
+    "title": "Film&Arts",
+    "name": "Film&Arts",
+    "titles": {
+      "ES": "Film&Arts"
+    },
+    "logoUrl": "/image/196694",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/filmsarts_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/filmsarts/output.mpd"
+    },
+    "imageUrl": "/image/196694",
+    "fetchLogoUrl": "/sb/image/196694",
+    "id": 49
+  },
+  {
+    "number": 660,
+    "displayName": "Discovery World",
+    "title": "Discovery World",
+    "name": "Discovery World",
+    "titles": {
+      "ES": "Discovery World"
+    },
+    "logoUrl": "/image/196622",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/disc_world_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/disc_world/output.mpd"
+    },
+    "imageUrl": "/image/196622",
+    "fetchLogoUrl": "/sb/image/196622",
+    "id": 36
+  },
+  {
+    "number": 662,
+    "displayName": "Discovery Science",
+    "title": "Discovery Science",
+    "name": "Discovery Science",
+    "titles": {
+      "EN": "Discovery Science",
+      "ES": "Discovery Science"
+    },
+    "logoUrl": "/image/53297407",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/dsc_sci_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/dsc_sci/output.mpd"
+    },
+    "imageUrl": "/image/53297407",
+    "fetchLogoUrl": "/sb/image/53297407",
+    "id": 503
+  },
+  {
+    "number": 700,
+    "displayName": "MTV",
+    "title": "MTV",
+    "name": "MTV",
+    "titles": {
+      "ES": "MTV"
+    },
+    "logoUrl": "/image/196623",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/mtv_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/mtv/output.mpd"
+    },
+    "imageUrl": "/image/196623",
+    "fetchLogoUrl": "/sb/image/196623",
+    "id": 31
+  },
+  {
+    "number": 705,
+    "displayName": "HTV",
+    "title": "HTV",
+    "name": "HTV",
+    "titles": {
+      "EN": "HTV",
+      "ES": "HTV"
+    },
+    "logoUrl": "/image/196690",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/htv_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/htv/output.mpd"
+    },
+    "imageUrl": "/image/196690",
+    "fetchLogoUrl": "/sb/image/196690",
+    "id": 249
+  },
+  {
+    "number": 707,
+    "displayName": "CM",
+    "title": "CM",
+    "name": "CM",
+    "titles": {
+      "EN": "CM",
+      "ES": "CM"
+    },
+    "logoUrl": "/image/196655",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/cmmusica_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/cmmusica/output.mpd"
+    },
+    "imageUrl": "/image/196655",
+    "fetchLogoUrl": "/sb/image/196655",
+    "id": 141
+  },
+  {
+    "number": 750,
+    "displayName": "CNN en  Español",
+    "title": "CNN en  Español",
+    "name": "CNN en Español",
+    "titles": {
+      "EN": "CNN en  Español",
+      "ES": "CNN en  Español"
+    },
+    "logoUrl": "/image/196638",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/cnne_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/cnne/output.mpd"
+    },
+    "imageUrl": "/image/196638",
+    "fetchLogoUrl": "/sb/image/196638",
+    "id": 241
+  },
+  {
+    "number": 756,
+    "displayName": "Telesur",
+    "title": "Telesur",
+    "name": "Telesur",
+    "titles": {
+      "EN": "Telesur",
+      "ES": "Telesur"
+    },
+    "logoUrl": "/image/196640",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/telesurtda_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/telesurtda/output.mpd"
+    },
+    "imageUrl": "/image/196640",
+    "fetchLogoUrl": "/sb/image/196640",
+    "id": 180
+  },
+  {
+    "number": 757,
+    "displayName": "CNN Internacional",
+    "title": "CNN Internacional",
+    "name": "CNN Internacional",
+    "titles": {
+      "EN": "CNN Internacional",
+      "ES": "CNN Internacional"
+    },
+    "logoUrl": "/image/196639",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/cnn_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/cnn/output.mpd"
+    },
+    "imageUrl": "/image/196639",
+    "fetchLogoUrl": "/sb/image/196639",
+    "id": 240
+  },
+  {
+    "number": 758,
+    "displayName": "DW",
+    "title": "DW",
+    "name": "DW",
+    "titles": {
+      "EN": "DW",
+      "ES": "DW"
+    },
+    "logoUrl": "/image/1673104",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/faster/dw_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/faster/dw/output.mpd"
+    },
+    "imageUrl": "/image/1673104",
+    "fetchLogoUrl": "/sb/image/1673104",
+    "id": 600
+  },
+  {
+    "number": 771,
+    "displayName": "RT TV",
+    "title": "RT TV",
+    "name": "RT TV",
+    "titles": {
+      "EN": "RT TV",
+      "ES": "RT TV"
+    },
+    "logoUrl": "/image/196609",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/iptvrt_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/iptvrt/output.mpd"
+    },
+    "imageUrl": "/image/196609",
+    "fetchLogoUrl": "/sb/image/196609",
+    "id": 19
+  },
+  {
+    "number": 772,
+    "displayName": "NHK",
+    "title": "NHK",
+    "name": "NHK/Japon",
+    "titles": {
+      "EN": "NHK",
+      "ES": "NHK"
+    },
+    "logoUrl": "/image/196636",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/nhk_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/nhk/output.mpd"
+    },
+    "imageUrl": "/image/196636",
+    "fetchLogoUrl": "/sb/image/196636",
+    "id": 101
+  },
+  {
+    "number": 800,
+    "displayName": "Canal Luz",
+    "title": "Canal Luz",
+    "name": "Canal Luz",
+    "titles": {
+      "EN": "Canal Luz",
+      "ES": "Canal Luz"
+    },
+    "logoUrl": "/image/3434022",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/inet/mnp/chLuz/index.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/inet/mnp/chLuz/index.m3u8"
+    },
+    "imageUrl": "/image/3434022",
+    "fetchLogoUrl": "/sb/image/3434022",
+    "id": 99
+  },
+  {
+    "number": 801,
+    "displayName": "Santa Maria/Maria Vision",
+    "title": "Santa Maria/Maria Vision",
+    "name": "Santa Maria/Maria Vision",
+    "titles": {
+      "EN": "Santa Maria/Maria Vision",
+      "ES": "Santa Maria/Maria Vision"
+    },
+    "logoUrl": "/image/196677",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/inet/mnp/mariaVision/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/inet/mnp/mariaVision/playlist.m3u8"
+    },
+    "imageUrl": "/image/196677",
+    "fetchLogoUrl": "/sb/image/196677",
+    "id": 100
+  },
+  {
+    "number": 803,
+    "displayName": "EWTN",
+    "title": "EWTN",
+    "name": "EWTN",
+    "titles": {
+      "EN": "EWTN",
+      "ES": "EWTN"
+    },
+    "logoUrl": "/image/26169435",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/inet/ewtn/mono.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/inet/ewtn/mono.m3u8"
+    },
+    "imageUrl": "/image/26169435",
+    "fetchLogoUrl": "/sb/image/26169435",
+    "id": 103
+  },
+  {
+    "number": 900,
+    "displayName": "El Once Parana",
+    "title": "El Once Parana",
+    "name": "FEDERALES_El Once Parana",
+    "titles": {
+      "EN": "El Once Parana",
+      "ES": "El Once Parana"
+    },
+    "logoUrl": "/image/21270583",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/hub/eloncetv/eloncetv.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/hub/eloncetv/eloncetv.mpd"
+    },
+    "imageUrl": "/image/21270583",
+    "fetchLogoUrl": "/sb/image/21270583",
+    "id": 9058
+  },
+  {
+    "number": 901,
+    "displayName": "Entre Rios Tv",
+    "title": "Entre Rios Tv",
+    "name": "FEDERALES_Entre Rios Tv",
+    "titles": {
+      "EN": "Entre Rios Tv",
+      "ES": "Entre Rios Tv"
+    },
+    "logoUrl": "/image/53297433",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/faster/ertv_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/faster/ertv/output.mpd"
+    },
+    "imageUrl": "/image/53297433",
+    "fetchLogoUrl": "/sb/image/53297433",
+    "id": 9004
+  },
+  {
+    "number": 902,
+    "displayName": "Remanso TV",
+    "title": "Remanso TV",
+    "name": "FEDERALES_Remanso TV",
+    "titles": {
+      "EN": "Remanso TV",
+      "ES": "Remanso TV"
+    },
+    "logoUrl": "/image/21270585",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/faster/remansotv_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/faster/remansotv/output.mpd"
+    },
+    "imageUrl": "/image/21270585",
+    "fetchLogoUrl": "/sb/image/21270585",
+    "id": 9007
+  },
+  {
+    "number": 903,
+    "displayName": "24/7",
+    "title": "24/7",
+    "name": "FEDERALES_24/7",
+    "titles": {
+      "EN": "24/07/23",
+      "ES": "24/7"
+    },
+    "logoUrl": "/image/53297421",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/hub/c247tv/c247tv.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/hub/c247tv/c247tv.mpd"
+    },
+    "imageUrl": "/image/53297421",
+    "fetchLogoUrl": "/sb/image/53297421",
+    "id": 9020
+  },
+  {
+    "number": 906,
+    "displayName": "RTN",
+    "title": "RTN",
+    "name": "FEDERALES_RTN",
+    "titles": {
+      "EN": "RTN",
+      "ES": "RTN"
+    },
+    "logoUrl": "/image/21270589",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/dvt/rtn_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/dvt/rtn/output.mpd"
+    },
+    "imageUrl": "/image/21270589",
+    "fetchLogoUrl": "/sb/image/21270589",
+    "id": 9021
+  },
+  {
+    "number": 907,
+    "displayName": "BVC Online",
+    "title": "BVC Online",
+    "name": "FEDERALES_BVC Online",
+    "titles": {
+      "EN": "BVC Online",
+      "ES": "BVC Online"
+    },
+    "logoUrl": "/image/21270590",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/inet/bvc/bvconline.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/inet/bvc/bvconline.m3u8"
+    },
+    "imageUrl": "/image/21270590",
+    "fetchLogoUrl": "/sb/image/21270590",
+    "id": 9034
+  },
+  {
+    "number": 908,
+    "displayName": "Canal 12 Trenque Lauquen",
+    "title": "Canal 12 Trenque Lauquen",
+    "name": "FEDERALES_Canal 12 Trenque Lauquen",
+    "titles": {
+      "EN": "Canal 12 Trenque Lauquen",
+      "ES": "Canal 12 Trenque Lauquen"
+    },
+    "logoUrl": "/image/53297427",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/cetl/hls/Canal12/index.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/cetl/hls/Canal12/index.m3u8"
+    },
+    "imageUrl": "/image/53297427",
+    "fetchLogoUrl": "/sb/image/53297427",
+    "id": 9026
+  },
+  {
+    "number": 909,
+    "displayName": "Aire de Santa Fe",
+    "title": "Aire de Santa Fe",
+    "name": "FEDERALES_Aire de Santa Fe",
+    "titles": {
+      "EN": "Aire de Santa Fe",
+      "ES": "Aire de Santa Fe"
+    },
+    "logoUrl": "/image/21270592",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/hub/airestafe/airestafe.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/hub/airestafe/airestafe.mpd"
+    },
+    "imageUrl": "/image/21270592",
+    "fetchLogoUrl": "/sb/image/21270592",
+    "id": 9053
+  },
+  {
+    "number": 910,
+    "displayName": "Canal 19 La Pampa",
+    "title": "Canal 19 La Pampa",
+    "name": "FEDERALES_Canal 19 La Pampa",
+    "titles": {
+      "ES": "Canal 19 La Pampa"
+    },
+    "logoUrl": "/image/17636299",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/inet/c19lp/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/inet/c19lp/playlist.m3u8"
+    },
+    "imageUrl": "/image/17636299",
+    "fetchLogoUrl": "/sb/image/17636299",
+    "id": 9036
+  },
+  {
+    "number": 911,
+    "displayName": "T5 Satelital",
+    "title": "T5 Satelital",
+    "name": "FEDERALES_T5 Satelital",
+    "titles": {
+      "EN": "T5 Satelital",
+      "ES": "T5 Satelital"
+    },
+    "logoUrl": "/image/21270593",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/faster/t5_hls/playlist.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/faster/t5/output.mpd"
+    },
+    "imageUrl": "/image/21270593",
+    "fetchLogoUrl": "/sb/image/21270593",
+    "id": 9008
+  },
+  {
+    "number": 913,
+    "displayName": "Canal de la Ciudad",
+    "title": "Canal de la Ciudad",
+    "name": "FEDERALES_Canal de la Ciudad",
+    "titles": {
+      "EN": "Canal de la Ciudad",
+      "ES": "Canal de la Ciudad"
+    },
+    "logoUrl": "/image/31810886",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/push/hls/canal_de_la_ciudad/index.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/push/dash/canal_de_la_ciudad/index.mpd"
+    },
+    "imageUrl": "/image/31810886",
+    "fetchLogoUrl": "/sb/image/31810886",
+    "id": 100018
+  },
+  {
+    "number": 914,
+    "displayName": "Radio Maria",
+    "title": "Radio Maria",
+    "name": "FEDERALES_Radio Maria",
+    "titles": {
+      "EN": "Radio Maria",
+      "ES": "Radio Maria"
+    },
+    "logoUrl": "/image/42613545",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/mnp/push/hls/radiomariaagentina/index.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/mnp/push/dash/radiomariaagentina/index.mpd"
+    },
+    "imageUrl": "/image/42613545",
+    "fetchLogoUrl": "/sb/image/42613545",
+    "id": 9076
+  },
+  {
+    "number": 916,
+    "displayName": "Ciudad TV",
+    "title": "Ciudad TV",
+    "name": "FEDERALES_Ciudad TV",
+    "titles": {
+      "EN": "Ciudad TV",
+      "ES": "Ciudad TV"
+    },
+    "logoUrl": "/image/44083917",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/hub/ciudadtv/ciudadtv.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/hub/ciudadtv/ciudadtv.mpd"
+    },
+    "imageUrl": "/image/44083917",
+    "fetchLogoUrl": "/sb/image/44083917",
+    "id": 1010
+  },
+  {
+    "number": 917,
+    "displayName": "Sicardi TV",
+    "title": "Sicardi TV",
+    "name": "FEDERALES_Sicardi TV",
+    "titles": {
+      "ES": "Sicardi TV"
+    },
+    "logoUrl": "/image/44886433",
+    "contentUrls": {
+      "hlsFP": "https://broker.cdn.rcs.net.ar/inet/sicardi/110105.m3u8",
+      "dash": "https://broker.cdn.rcs.net.ar/inet/sicardi/110105.m3u8"
+    },
+    "imageUrl": "/image/44886433",
+    "fetchLogoUrl": "/sb/image/44886433",
+    "id": 1020
+  }
+]

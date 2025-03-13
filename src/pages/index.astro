@@ -1,11 +1,107 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import { buttonVariants } from "@/components/ui/button";
+import Layout from "../layouts/Layout.astro";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+const SITE_URL = import.meta.env.SITE_URL;
+const request = await fetch(`${SITE_URL}/api/canales`);
+const canales = await request.json();
 ---
 
 <Layout>
-	<Welcome />
+  <div class="container mx-auto py-8 px-8">
+    <div class="flex flex-col gap-3 mb-6">
+      <div class="flex flex-wrap justify-between items-center gap-4">
+        <h1 class="text-3xl font-bold">Lista de canales</h1>
+        <div class="flex items-center gap-4">
+          <span
+            class="bg-slate-800 text-white px-3 py-1 rounded-full text-sm font-medium"
+          >
+            {canales.data.length} canales disponibles
+          </span>
+          <a href="/informacion">
+            <span
+              class="bg-slate-800 text-white px-3 py-1 rounded-full text-sm font-medium"
+            >
+              Información
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Lista IPTV button with fixed text size -->
+      <div>
+        <button
+          id="copyIptvButton"
+          type="button"
+          class="hover:cursor-pointer bg-slate-800 text-white px-3 py-1 rounded-full text-base font-medium hover:bg-slate-700 transition-colors"
+        >
+          Lista IPTV
+        </button>
+      </div>
+    </div>
+
+    <!-- Responsive grid layout -->
+    <div
+      class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+    >
+      {
+        canales.data.map((channel) => (
+          <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden">
+            <div class="flex items-center p-4 w-full">
+              <div class="flex-shrink-0 mr-4">
+                <div class="w-16 h-16 rounded-md overflow-hidden bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                  <img
+                    class="w-full h-full object-contain"
+                    src={`${channel.logoUrl}`}
+                    alt={
+                      channel.titles.ES || channel.titles.EN || "Logo del canal"
+                    }
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              <div class="flex-grow">
+                <div class="flex items-center">
+                  <h2 class="text-lg font-medium text-slate-900 dark:text-white">
+                    {channel.titles.ES || channel.titles.EN}
+                  </h2>
+                </div>
+              </div>
+
+              <div class="flex-shrink-0 ml-4">
+                <a
+                  href={`/ver/${channel.number}`}
+                  class={`${buttonVariants({ variant: "default" })} text-sm`}
+                >
+                  Ver Ahora
+                </a>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
 </Layout>
+
+<script define:vars={{ SITE_URL }}>
+  // Script to copy text to clipboard when "Lista IPTV" button is clicked
+  document.addEventListener("DOMContentLoaded", () => {
+    const copyButton = document.getElementById("copyIptvButton");
+
+    if (copyButton) {
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(`${SITE_URL}/m3u`);
+
+          // Show alert
+          alert("Link a la lista IPTV Copiada al portapapeles");
+        } catch (err) {
+          console.error("Error copiando texto: ", err);
+          alert(`Error copiando url, el url es: ${SITE_URL}/m3u`);
+        }
+      });
+    }
+  });
+</script>

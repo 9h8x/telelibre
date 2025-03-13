@@ -1,0 +1,353 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+const { id } = Astro.params;
+const SITE_URL = import.meta.env.SITE_URL
+const request = await fetch(`${SITE_URL}/api/canales`);
+const canales = await request.json();
+
+// Asegurar que canales es un array
+const esArrayValido = Array.isArray(canales.data);
+const listaCanales = esArrayValido ? canales.data : [];
+const canal = esArrayValido
+  ? listaCanales.find((canal) => canal.number === parseInt(id))
+  : null;
+
+// Verificar si el canal tiene URLs de streaming
+const tieneDashUrl = canal?.contentUrls?.dash;
+const tieneHlsUrl = canal?.contentUrls?.hlsFP;
+
+const customBaseUrl = `${SITE_URL}/stream/`;
+const dashUrl = tieneDashUrl
+  ? canal.contentUrls.dash
+  : null;
+const hlsUrl = tieneHlsUrl
+  ? canal.contentUrls.hlsFP
+  : null;
+
+// Encontrar el índice del canal actual para el autodesplazamiento
+const canalIndex = listaCanales.findIndex((c) => c.number === parseInt(id));
+---
+
+<Layout>
+  {esArrayValido ? (
+    <div class="container mx-auto py-6 px-4 flex flex-col md:flex-row-reverse gap-6">
+      <!-- Barra lateral con lista de canales (ahora a la derecha) -->
+      <div class="md:w-64 w-full md:min-h-screen">
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-4 sticky top-4">
+          <h2 class="text-lg font-semibold mb-3">Todos los Canales</h2>
+          <div class="max-h-[70vh] overflow-y-auto pr-1" id="sidebar-channels">
+            <ul class="space-y-1">
+              {listaCanales.map((canal, index) => (
+                <li id={`canal-${canal.number}`} class={index === canalIndex ? "scroll-target" : ""}>
+                  <a 
+                    href={`/ver/${canal.number}`}
+                    class={`flex items-center p-2 rounded-md transition-colors ${
+                      canal.number === parseInt(id) 
+                        ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' 
+                        : 'hover:bg-gray-100 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    <div class="w-8 h-8 mr-2 flex-shrink-0 bg-slate-100 dark:bg-slate-700 rounded overflow-hidden flex items-center justify-center">
+                      <img 
+                        class="w-full h-full object-contain" 
+                        src={`${canal.logoUrl}`} 
+                        alt={canal.displayName}
+                        loading="lazy"
+                      />
+                    </div>
+                    <div class="flex-1 truncate">
+                      <span class="font-medium">{canal.number}</span>
+                      <span class="ml-1 text-sm text-gray-600 dark:text-gray-400">{canal.displayName}</span>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Área de contenido principal -->
+      <div class="flex-1">
+        {canal ? (
+          <div>
+            <div class="mb-6">
+              <a href="/" class="text-blue-600 hover:underline mb-4 inline-flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Volver a Canales
+              </a>
+              
+              <div class="flex items-center mt-2">
+                <div class="w-16 h-16 rounded-md overflow-hidden bg-slate-100 mr-4 flex items-center justify-center">
+                  <img 
+                    class="w-full h-full object-contain" 
+                    src={`${canal.logoUrl}`} 
+                    alt={canal.displayName}
+                  />
+                </div>
+                <div>
+                  <h1 class="text-2xl font-bold">{canal.displayName}</h1>
+                  <p class="text-slate-500">Canal {canal.number}</p>
+                  <p class="text-slate-500">Haz clic en el botón de reproducir para iniciar el video</p>
+                  <p class="text-slate-500">No anda fuera de Argentina, si estas en argentina y no te funciona probablemente estes bloqueado por los links</p>
+                </div>
+              </div>
+            </div>
+
+            {tieneDashUrl || tieneHlsUrl ? (
+              <div>
+                <div class="bg-black rounded-lg overflow-hidden shadow-xl relative">
+                  <div id="video-container" class="w-full aspect-video relative">
+                    <video id="video" class="w-full h-full"></video>
+                    <!-- Play button overlay -->
+                    <div id="play-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 cursor-pointer z-10">
+                      <button id="play-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full flex items-center justify-center transition-all transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="ml-2">Reproducir</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Control de calidad -->
+                <div class="mt-3 bg-white dark:bg-slate-800 p-3 rounded-lg shadow">
+                  <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                    <label for="quality-selector" class="font-medium text-sm whitespace-nowrap">Calidad de Video:</label>
+                    <select 
+                      id="quality-selector" 
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                    >
+                      <option value="auto">Auto (Recomendado)</option>
+                      <!-- Las opciones se rellenarán con JavaScript -->
+                    </select>
+                    <span id="current-resolution" class="text-xs text-gray-500 dark:text-gray-400 ml-auto"></span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                <p>No hay URL de streaming disponible para este canal.</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div class="py-12 px-4 text-center">
+            <h1 class="text-2xl font-bold text-red-600">
+              Canal con número {id} no encontrado.
+            </h1>
+            <a href="/" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Volver a Canales
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  ) : (
+    <div class="container mx-auto py-12 px-4 text-center">
+      <h1 class="text-2xl font-bold text-red-600">
+        Error: Formato de datos inválido desde la API.
+      </h1>
+      <a href="/" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Volver a Canales
+      </a>
+    </div>
+  )}
+</Layout>
+
+<style>
+  video::-webkit-media-controls-timeline {
+    display: none;
+  }
+  video::-webkit-media-controls-time-remaining-display {
+    display: none;
+  }
+  video::-webkit-media-controls-current-time-display {
+    display: none;
+  }
+  
+  /* Para hacer que el sidebar llegue hasta el final */
+  html, body {
+    height: 100%;
+  }
+</style>
+
+{(tieneDashUrl || tieneHlsUrl) && (
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.js"></script>
+  <script is:inline define:vars={{ dashUrl, hlsUrl, canalIndex }}>
+  document.addEventListener('DOMContentLoaded', async function() {
+    const video = document.getElementById('video');
+    const player = new shaka.Player(video);
+    exposedPlayer = player;
+    const qualitySelector = document.getElementById('quality-selector');
+    const currentResolutionEl = document.getElementById('current-resolution');
+    const videoContainer = document.getElementById('video-container');
+    const playOverlay = document.getElementById('play-overlay');
+    const playButton = document.getElementById('play-button');
+    
+    let playerLoaded = false;
+
+    const scrollToCurrentChannel = () => {
+      const sidebarContainer = document.getElementById('sidebar-channels');
+      const target = document.querySelector('.scroll-target');
+      
+      if (sidebarContainer && target) {
+        const containerHeight = sidebarContainer.clientHeight;
+        const targetTop = target.offsetTop;
+        const targetHeight = target.clientHeight;
+        sidebarContainer.scrollTop = targetTop - (containerHeight / 2) + (targetHeight / 2);
+      }
+    };
+
+    setTimeout(scrollToCurrentChannel, 100);
+
+    // Configure Shaka Player correctly
+    player.configure({
+      streaming: {
+        autoplay: false // Disable autoplay
+      }
+    });
+
+    // Error event listener
+    player.addEventListener('error', (event) => {
+      console.error('Código de error', event.detail.code, 'objeto', event.detail);
+    });
+
+    // Handle play button click
+    playButton.addEventListener('click', () => {
+      if (playerLoaded) {
+        playOverlay.style.display = 'none';
+        video.play();
+      } else {
+        tryLoadStream().then(() => {
+          playOverlay.style.display = 'none';
+          video.play();
+        });
+      }
+    });
+
+    // Show play overlay when video ends
+    video.addEventListener('ended', () => {
+      playOverlay.style.display = 'flex';
+    });
+
+    const showErrorMessage = (message) => {
+      videoContainer.innerHTML = `
+        <div class="flex items-center justify-center w-full h-full bg-black text-white p-4">
+          <div class="text-center">
+            <p class="text-xl font-semibold">Canal no disponible</p>
+            <p class="mt-2 text-sm text-gray-400">${message}</p>
+          </div>
+        </div>
+      `;
+    };
+
+    const setupQualityOptions = () => {
+      const tracks = player.getVariantTracks();
+      const tracksByHeight = {};
+      
+      tracks.forEach(track => {
+        const height = track.height || 0;
+        if (!tracksByHeight[height]) {
+          tracksByHeight[height] = [];
+        }
+        tracksByHeight[height].push(track);
+      });
+      
+      while (qualitySelector.firstChild) {
+        qualitySelector.removeChild(qualitySelector.firstChild);
+      }
+      
+      const autoOption = document.createElement('option');
+      autoOption.value = 'auto';
+      autoOption.textContent = 'Auto (Recomendado)';
+      qualitySelector.appendChild(autoOption);
+      
+      Object.keys(tracksByHeight)
+        .map(height => parseInt(height))
+        .sort((a, b) => b - a)
+        .forEach(height => {
+          if (height > 0) {
+            const option = document.createElement('option');
+            const track = tracksByHeight[height][0];
+            option.value = height;
+            option.textContent = `${height}p ${track.bandwidth ? `(${Math.round(track.bandwidth / 1000)} kbps)` : ''}`;
+            qualitySelector.appendChild(option);
+          }
+        });
+    };
+
+    const updateCurrentResolution = () => {
+      const activeTrack = player.getVariantTracks().find(t => t.active);
+      if (activeTrack && activeTrack.height) {
+        currentResolutionEl.textContent = `Reproduciendo: ${activeTrack.height}p`;
+      } else {
+        currentResolutionEl.textContent = '';
+      }
+    };
+
+    const handleQualityChange = (event) => {
+      const selectedValue = event.target.value;
+      if (selectedValue === 'auto') {
+        player.configure('abr.enabled', true);
+      } else {
+        player.configure('abr.enabled', false);
+        const height = parseInt(selectedValue);
+        const tracksWithHeight = player.getVariantTracks().filter(t => t.height === height);
+        if (tracksWithHeight.length > 0) {
+          const bestTrack = tracksWithHeight.reduce((prev, current) => (prev.bandwidth > current.bandwidth ? prev : current));
+          player.selectVariantTrack(bestTrack, true);
+        }
+      }
+    };
+
+    async function tryLoadStream() {
+      try {
+        if (dashUrl) {
+          try {
+            await player.load(dashUrl);
+            playerLoaded = true;
+            setupQualityOptions();
+            player.addEventListener('variantchanged', updateCurrentResolution);
+            updateCurrentResolution();
+            qualitySelector.addEventListener('change', handleQualityChange);
+            return;
+          } catch (dashError) {
+            console.error('Error al cargar DASH:', dashError);
+          }
+        }
+
+        if (hlsUrl) {
+          try {
+            await player.load(hlsUrl);
+            playerLoaded = true;
+            setupQualityOptions();
+            player.addEventListener('variantchanged', updateCurrentResolution);
+            updateCurrentResolution();
+            qualitySelector.addEventListener('change', handleQualityChange);
+            return;
+          } catch (hlsError) {
+            console.error('Error al cargar HLS:', hlsError);
+            throw new Error('No se pudo reproducir el stream');
+          }
+        } else if (!dashUrl) {
+          throw new Error('No se pudo reproducir el stream');
+        }
+      } catch (error) {
+        console.error('Error al cargar el medio:', error);
+        showErrorMessage('Este canal no está disponible en este momento');
+      }
+    }
+
+    if (dashUrl || hlsUrl) {
+      tryLoadStream();
+    }
+  });
+</script>
+
+)}

@@ -1,0 +1,31 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout>
+  <!-- Aligning the button to the top left -->
+  <a href="/" class="absolute top-4 left-4 px-8 text-blue-700 hover:underline"
+    >Volver al inicio</a
+  >
+
+  <div class="px-8 py-8">
+    <h1 class="text-center text-2xl mb-4">Información</h1>
+    <p class="text-center">
+      La página la hice en menos de cuatro horas. Si anda mal, no se quejen.
+    </p>
+    <p class="text-center">
+      Para los que quieren ver los links de los streams, hay un endpoint en <a
+        href="/api/canales"
+        class="text-blue-700">/api/canales</a
+      > con un JSON para los que quieran la lista. Incluye los links del manifest
+      y los m3u8.
+    </p>
+    <p class="text-center">
+      El día en el que me manden un <i>cease and desist</i> o algo similar, voy a
+      publicar todo el código fuente y lo voy a linkear acá.
+    </p>
+
+    <h1 class="text-center text-2xl my-8">Contacto</h1>
+    <p class="text-center">Pueden contactarme por email: <a class="text-blue-500" href="mailto:admin@telelibre.site">admin@telelibre.site</a> o por discord: <a class="text-blue-500" href="https://discord.com/users/1300221955248623738">telelibre</a></p>
+  </div>
+</Layout>
