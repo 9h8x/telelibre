@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: 
+Disallow: /cgi-bin/
+Disallow: /api/
+Sitemap: https://telelibre.site/sitemap-index.xml
