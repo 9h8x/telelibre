@@ -6,12 +6,14 @@ import tailwindcss from "@tailwindcss/vite";
 
 import node from "@astrojs/node";
 
+import sitemap from "@astrojs/sitemap";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://telelibre.site",
   output: "server",
   adapter: cloudflare(),
-  integrations: [react()],
+  integrations: [react(), sitemap()],
   vite: {
     build: {
       outDir: "dist",
