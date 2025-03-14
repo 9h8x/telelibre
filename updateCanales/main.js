@@ -1,7 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import fetch from "node-fetch";
+import dotenv from "dotenv";
 
-// Environment variables - you'll need to set these in your environment
+// Load environment variables from .env file
+dotenv.config();
+
+// Environment variables - loaded from .env file
 const USERNAME = process.env.AUTH_USERNAME;
 const PASSWORD = process.env.AUTH_PASSWORD;
 const TENANT_ID = process.env.AUTH_TENANT_ID;
@@ -201,6 +205,23 @@ function getExtensionFromContentType(contentType) {
 
 async function main() {
   try {
+    // Check if required environment variables are set
+    if (
+      !USERNAME ||
+      !PASSWORD ||
+      !TENANT_ID ||
+      !SUPABASE_URL ||
+      !SUPABASE_ANON_KEY
+    ) {
+      console.error(
+        "Missing required environment variables. Please check your .env file."
+      );
+      console.error(
+        "Required variables: AUTH_USERNAME, AUTH_PASSWORD, AUTH_TENANT_ID, SUPABASE_URL, SUPABASE_ANON_KEY"
+      );
+      return;
+    }
+
     console.log("Starting channel fetch process...");
 
     // Authenticate directly using the integrated authentication function
