@@ -368,6 +368,7 @@ export async function GET({ request, locals }) {
       JSON.stringify({
         success: false,
         error: "Server error",
+        errorO: error
       }),
       {
         status: 500,
