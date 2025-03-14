@@ -1,12 +1,15 @@
 ---
+export const prerender = false
 import Layout from "@/layouts/Layout.astro";
 
 const { env } = Astro.locals.runtime;
-const { locals } = Astro;
+
 const SITE_URL = env.SITE_URL;
 
 const request = await fetch(`${SITE_URL}/api/canales`);
 const canales = await request.json();
+
+const {id} = Astro.params
 
 // Asegurar que canales es un array
 const esArrayValido = Array.isArray(canales.data);
@@ -19,7 +22,6 @@ const canal = esArrayValido
 const tieneDashUrl = canal?.contentUrls?.dash;
 const tieneHlsUrl = canal?.contentUrls?.hlsFP;
 
-const customBaseUrl = `${SITE_URL}/stream/`;
 const dashUrl = tieneDashUrl
   ? canal.contentUrls.dash
   : null;
