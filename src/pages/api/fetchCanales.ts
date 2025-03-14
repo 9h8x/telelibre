@@ -1,10 +1,14 @@
-import { writeFile, mkdir, access } from "fs/promises";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
 
 const SITE_URL = import.meta.env.SITE_URL;
 const USERNAME = import.meta.env.AUTH_USERNAME;
 const PASSWORD = import.meta.env.AUTH_PASSWORD;
 const TENANT_ID = import.meta.env.AUTH_TENANT_ID;
+
+// Initialize Supabase client
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function GET({ request }) {
   try {
@@ -133,9 +137,13 @@ export async function GET({ request }) {
     };
 
     // Process new data
+    // Process new data
     const processedData = newData
       .filter((channel) => channel.id !== 1032) // Filter out unwanted channels
       .map((channel) => {
+        // Store the original ID before cleaning
+        const originalId = channel.id;
+
         const cleanedChannel = cleanObjectStrings(channel);
 
         // For fetching we need to add "/sb" to the logo URL
@@ -148,20 +156,23 @@ export async function GET({ request }) {
           ? cleanedChannel.logoUrl.replace("/sb", "")
           : cleanedChannel.logoUrl;
 
+        // Extract just the ID by removing the /image/ prefix
+        const imageId = savedLogoUrl.replace("/image/", "");
+
         return {
           number: cleanedChannel.number,
           displayName: cleanedChannel.displayName,
           title: cleanedChannel.title,
           name: cleanedChannel.name,
           titles: cleanedChannel.titles,
-          logoUrl: savedLogoUrl, // Save without "/sb" prefix
+          logoUrl: savedLogoUrl, // Keep the full path for reference
           contentUrls: {
             hlsFP: cleanedChannel.contentUrls?.hlsFP,
             dash: cleanedChannel.contentUrls?.dash,
           },
-          imageUrl: savedLogoUrl, // Use the correct format for saving
+          imageUrl: savedLogoUrl, // Keep the full path for reference
           fetchLogoUrl: fetchLogoUrl, // Keep the fetch URL for downloading images
-          id: cleanedChannel.id, // Keep the channel ID for reference
+          id: originalId, // Use the original ID, not the cleaned one
         };
       })
       .filter(
@@ -171,14 +182,28 @@ export async function GET({ request }) {
           !channel.name?.includes("Canal Support")
       );
 
-    await writeFile(
-      "./src/data.json",
-      JSON.stringify(processedData, null, 2),
-      "utf-8"
-    );
+    // Instead of writing to a local file, store the data in Supabase
 
-    await mkdir("./public/images", { recursive: true });
+    // First, clear the existing data (optional - you might want to implement a different approach)
+    const { error: deleteError } = await supabase
+      .from("channels")
+      .delete()
+      .neq("id", 0); // This effectively deletes all rows
 
+    if (deleteError) {
+      console.error("Error clearing existing channel data:", deleteError);
+    }
+
+    // Insert the new channel data
+    const { error: insertError } = await supabase
+      .from("channels")
+      .insert(processedData);
+
+    if (insertError) {
+      throw insertError;
+    }
+
+    // Download and store channel logos in Supabase Storage
     const fetchWithTimeout = async (url: string, timeoutMs: number) => {
       const timeout = new Promise((_, reject) =>
         setTimeout(() => reject(new Error("Timeout")), timeoutMs)
@@ -189,6 +214,7 @@ export async function GET({ request }) {
     // Function to attempt image fetch from all base URLs if needed
     const fetchImageFromAllBaseUrls = async (
       logoPath: string,
+      imageId: string,
       timeoutMs: number = 10000
     ) => {
       // Try with a random base URL first
@@ -208,7 +234,9 @@ export async function GET({ request }) {
       }
 
       // If the first attempt failed, try with each base URL sequentially
-      console.log(`Trying all base URLs for ${logoPath}`);
+      console.log(
+        `Trying all base URLs for ${logoPath} (image ID: ${imageId})`
+      );
 
       for (const baseUrl of baseUrls) {
         if (baseUrl === initialBaseUrl) continue; // Skip the one we already tried
@@ -227,40 +255,87 @@ export async function GET({ request }) {
         }
       }
 
-      throw new Error(`Image not found on any base URL: ${logoPath}`);
+      throw new Error(
+        `Image not found on any base URL: ${logoPath} (image ID: ${imageId})`
+      );
     };
 
-    const imageSavePromises = processedData.map(async (item) => {
-      if (item.fetchLogoUrl) {
+    // Check if channel logo already exists in Supabase Storage
+    const imageUploadPromises = processedData.map(async (item) => {
+      if (item.fetchLogoUrl && item.id) {
         try {
-          const { response: response2, baseUrl: successfulBaseUrl } =
-            await fetchImageFromAllBaseUrls(item.fetchLogoUrl);
+          // Extract the image ID from the imageUrl (remove "/image/" prefix)
+          const imageId = item.imageUrl.replace("/image/", "");
 
-          const contentType = response2.headers.get("Content-Type");
-          const extension = getExtensionFromContentType(contentType);
+          // Check if image already exists in storage by searching for the image ID
+          const { data: existingFiles, error: checkError } =
+            await supabase.storage.from("channel-logos").list("", {
+              search: imageId, // Search for files starting with the image ID
+            });
 
-          if (!extension) {
-            console.warn(
-              `Unknown Content-Type for image: ${item.fetchLogoUrl}`
+          // If image already exists, skip it
+          if (!checkError && existingFiles && existingFiles.length > 0) {
+            console.log(
+              `Image already exists for image ID ${imageId} (channel ${item.id})`
             );
             return;
           }
 
-          const fileName = `${path.basename(item.logoUrl)}${extension}`;
-          const imagePath = path.join("./public/images", fileName);
+          // Fetch the image
+          const { response, baseUrl } = await fetchImageFromAllBaseUrls(
+            item.fetchLogoUrl,
+            imageId.toString(), // Use image ID for logging
+            10000
+          );
 
-          try {
-            await access(imagePath);
-            console.log(`Image already exists: ${imagePath}`);
-            return;
-          } catch {
-            // File does not exist, proceed to download
+          const contentType = response.headers.get("Content-Type");
+          const extension = getExtensionFromContentType(contentType) || ".jpg";
+
+          // Generate a filename using the image ID, not the channel ID
+          const fileName = `${imageId}${extension}`;
+
+          // Convert response to blob
+          const imageBlob = await response.blob();
+
+          // Upload to Supabase Storage
+          const { error: uploadError } = await supabase.storage
+            .from("channel-logos")
+            .upload(fileName, imageBlob, {
+              contentType,
+              upsert: true,
+            });
+
+          if (uploadError) {
+            throw uploadError;
           }
 
-          const buffer = await response2.arrayBuffer();
-          await writeFile(imagePath, Buffer.from(buffer));
+          console.log(
+            `Image saved to Supabase Storage: ${fileName} (from ${baseUrl})`
+          );
 
-          console.log(`Image saved: ${imagePath} (from ${successfulBaseUrl})`);
+          // Get the public URL for the uploaded image
+          const { data: publicUrlData } = supabase.storage
+            .from("channel-logos")
+            .getPublicUrl(fileName);
+
+          // Update the channel record with the new image URL
+          if (publicUrlData) {
+            const { error: updateError } = await supabase
+              .from("channels")
+              .update({ logoPublicUrl: publicUrlData.publicUrl })
+              .eq("id", item.id);
+
+            if (updateError) {
+              console.error(
+                `Error updating channel ${item.id} with logo URL:`,
+                updateError
+              );
+            } else {
+              console.log(
+                `Updated channel ${item.id} with logo URL: ${publicUrlData.publicUrl}`
+              );
+            }
+          }
         } catch (error) {
           console.error(
             `Error saving image for channel ${item.id || "unknown"}: ${
@@ -271,7 +346,7 @@ export async function GET({ request }) {
       }
     });
 
-    await Promise.all(imageSavePromises);
+    await Promise.all(imageUploadPromises);
 
     return new Response(
       JSON.stringify({
@@ -284,7 +359,7 @@ export async function GET({ request }) {
       }
     );
   } catch (error) {
-    console.error("Error reading JSON file or saving image:", error);
+    console.error("Error processing channels or uploading images:", error);
 
     return new Response(
       JSON.stringify({

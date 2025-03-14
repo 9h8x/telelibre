@@ -1,43 +1,43 @@
-import { readdir, readFile } from "fs/promises";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
 
-// Define special image mappings for specific channel IDs
+// Initialize Supabase client
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Define special image mappings for specific image IDs
 const SPECIAL_IMAGE_MAPPINGS = {
-  49945575:
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Cinemax_%28Yellow%29.svg/1200px-Cinemax_%28Yellow%29.svg.png",
+  // Use image IDs as keys (the numbers after /image/)
+  "5809896": "https://example.com/special-image.png",
 };
+
+// Default fallback image URL for when all other methods fail
+const DEFAULT_FALLBACK_IMAGE =
+  "https://placehold.co/300x200?text=No+Image+Available";
 
 export async function GET({ params }) {
   try {
-    const { id } = params; // Extract the dynamic `id` from the URL
+    const { id: imageId } = params; // This is the image ID from the URL
 
-    if (!id) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Missing image identifier in the URL",
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+    if (!imageId) {
+      // Redirect to default fallback if no ID is provided
+      return redirectToFallback();
     }
 
-    // Check if this ID has a special image mapping
-    if (SPECIAL_IMAGE_MAPPINGS[id]) {
+    // Check if this image ID has a special mapping
+    if (SPECIAL_IMAGE_MAPPINGS[imageId]) {
       try {
-        console.log(`Using special image mapping for ID: ${id}`);
-        const specialImageUrl = SPECIAL_IMAGE_MAPPINGS[id];
+        console.log(`Using special image mapping for ID: ${imageId}`);
+        const specialImageUrl = SPECIAL_IMAGE_MAPPINGS[imageId];
 
         // Fetch the special image
         const specialImageResponse = await fetch(specialImageUrl);
 
         if (!specialImageResponse.ok) {
           console.warn(
-            `Failed to fetch special image for ${id}, falling back to local`
+            `Failed to fetch special image for ${imageId}, falling back to storage`
           );
-          // If special image fetch fails, continue with normal flow to try local files
+          // If special image fetch fails, continue with normal flow
         } else {
           const contentType = specialImageResponse.headers.get("Content-Type");
           const imageBuffer = await specialImageResponse.arrayBuffer();
@@ -47,68 +47,106 @@ export async function GET({ params }) {
             status: 200,
             headers: {
               "Content-Type": contentType || "image/jpeg",
+              "Cache-Control": "public, max-age=86400", // Cache for 24 hours
             },
           });
         }
       } catch (error) {
-        console.error(`Error fetching special image for ${id}:`, error);
-        // Continue with normal flow to try local files
+        console.error(`Error fetching special image for ${imageId}:`, error);
+        // Continue with normal flow
       }
     }
 
-    // Define the image directory
-    const imageDir = path.join(process.cwd(), "public/images");
+    // Get all files in the channel-logos bucket
+    const { data: files, error: listError } = await supabase.storage
+      .from("channel-logos")
+      .list("");
 
-    // Read all files in the image directory
-    const files = await readdir(imageDir);
-
-    // Find the file that matches the image ID (with any extension)
-    const matchedFile = files.find((file) => file.startsWith(id));
-
-    if (!matchedFile) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: `Image not found for identifier: ${id}`,
-        }),
-        {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+    if (listError) {
+      console.error("Error listing files:", listError);
+      // Continue to the next fallback instead of throwing
     }
 
-    // Construct the full path to the matched file
-    const filePath = path.join(imageDir, matchedFile);
-
-    // Read the image file
-    const fileBuffer = await readFile(filePath);
-
-    // Determine the MIME type based on the file extension
-    const fileExtension = path.extname(matchedFile).slice(1);
-    const mimeType = getMimeType(fileExtension);
-
-    // Serve the image file
-    return new Response(fileBuffer, {
-      status: 200,
-      headers: {
-        "Content-Type": mimeType,
-      },
+    // Find a file that matches the image ID, regardless of extension
+    const matchedFile = files?.find((file) => {
+      const fileName = file.name.split(".")[0]; // Get filename without extension
+      return fileName === imageId;
     });
+
+    if (matchedFile) {
+      try {
+        // Download the file from Supabase Storage
+        const { data: fileData, error: downloadError } = await supabase.storage
+          .from("channel-logos")
+          .download(matchedFile.name);
+
+        if (downloadError || !fileData) {
+          console.error("Error downloading file:", downloadError);
+          // Continue to the next fallback
+        } else {
+          // Determine the MIME type based on the file extension
+          const fileExtension = matchedFile.name.split(".").pop() || "";
+          const mimeType = getMimeType(fileExtension);
+
+          // Convert blob to array buffer
+          const arrayBuffer = await fileData.arrayBuffer();
+
+          // Serve the image file
+          return new Response(arrayBuffer, {
+            status: 200,
+            headers: {
+              "Content-Type": mimeType,
+              "Cache-Control": "public, max-age=86400", // Cache for 24 hours
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error processing matched file:", error);
+        // Continue to the next fallback
+      }
+    }
+
+    // If no direct match in storage, try to find the channel that has this image ID
+    try {
+      const { data: channelData, error: channelError } = await supabase
+        .from("channels")
+        .select("logoPublicUrl")
+        .filter("imageUrl", "ilike", `%/image/${imageId}`)
+        .single();
+
+      if (!channelError && channelData && channelData.logoPublicUrl) {
+        // Redirect to the public URL if available
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: channelData.logoPublicUrl,
+            "Cache-Control": "public, max-age=3600", // Cache for 1 hour
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error querying channel data:", error);
+      // Continue to the fallback
+    }
+
+    // If all methods fail, use the default fallback image
+    return redirectToFallback();
   } catch (error) {
     console.error("Error serving image:", error);
-
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: "Server error",
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    // Even if there's an error, still return the fallback image
+    return redirectToFallback();
   }
+}
+
+// Helper function to redirect to the fallback image
+function redirectToFallback() {
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: DEFAULT_FALLBACK_IMAGE,
+      "Cache-Control": "public, max-age=3600", // Cache for 1 hour
+    },
+  });
 }
 
 // Helper function to get MIME type based on file extension

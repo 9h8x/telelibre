@@ -1,20 +1,26 @@
-import { readFile } from 'fs/promises';
+// src/pages/api/canales.ts
+import { createClient } from "@supabase/supabase-js";
+
+// Initialize Supabase client
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function GET({ request }) {
   try {
-    // Read the JSON file
-    const data = await readFile('./src/data.json', 'utf-8');
-    
-    // Parse the JSON data
-    const parsedData = JSON.parse(data);
+    // Fetch data from Supabase instead of local file
+    const { data, error } = await supabase.from("channels").select("*");
 
-    // Return the parsed data as a response
+    if (error) throw error;
+
+    // Return the data as a response
     return new Response(
       JSON.stringify({
-        message: 'Si estas viendo esto es porque sos muy curioso o porque sos alguien de SYT preguntandose como obtuve todo esto',
-        contact: 'Email: admin@telelibre.site | Discord: telelibre',
+        message:
+          "Si estas viendo esto es porque sos muy curioso o porque sos alguien de SYT preguntandose como obtuve todo esto",
+        contact: "Email: admin@telelibre.site | Discord: telelibre",
         success: true,
-        data: parsedData,
+        data: data,
       }),
       {
         status: 200,
@@ -22,13 +28,13 @@ export async function GET({ request }) {
       }
     );
   } catch (error) {
-    console.error('Error reading JSON file:', error);
+    console.error("Error fetching data from Supabase:", error);
 
-    // Handle errors (e.g., file not found, invalid JSON)
+    // Handle errors
     return new Response(
       JSON.stringify({
         success: false,
-        error: "Failed to load data from JSON file",
+        error: "Failed to load data from database",
       }),
       {
         status: 500,
