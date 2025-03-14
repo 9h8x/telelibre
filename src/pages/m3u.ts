@@ -1,15 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
 
-const SITE_URL = import.meta.env.SITE_URL;
-
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-export async function GET({ request }) {
+export async function GET({ request, locals }) {
   try {
-    // Fetch data directly from Supabase instead of API endpoint
+    const { env } = locals.runtime;
+
+    // Initialize Supabase client using environment variables from runtime
+    const SITE_URL = env.SITE_URL
+    const supabaseUrl = env.SUPABASE_URL;
+    const supabaseKey = env.SUPABASE_ANON_KEY;
+    const supabase = createClient(supabaseUrl, supabaseKey);
     const { data: channels, error } = await supabase
       .from("channels")
       .select("*");

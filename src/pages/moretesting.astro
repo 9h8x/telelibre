@@ -1,8 +1,0 @@
----
-const { env } = Astro.locals.runtime;
-const SITE_URL = env.SITE_URL;
-const request = await fetch(`${SITE_URL}/api/canales`);
-const canales = await request.json();
----
-
-<h1>{canales}</h1>
