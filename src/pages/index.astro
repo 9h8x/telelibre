@@ -3,7 +3,6 @@ export const prerender = false
 const { env } = Astro.locals.runtime;
 import { buttonVariants } from "@/components/ui/button";
 import Layout from "../layouts/Layout.astro";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const SITE_URL = env.SITE_URL;
 const request = await fetch(`${SITE_URL}/api/canales`);
 const canales = await request.json();
@@ -88,7 +87,6 @@ const canales = await request.json();
 </Layout>
 
 <script define:vars={{ SITE_URL }}>
-  // Script to copy text to clipboard when "Lista IPTV" button is clicked
   document.addEventListener("DOMContentLoaded", () => {
     const copyButton = document.getElementById("copyIptvButton");
 
@@ -97,7 +95,6 @@ const canales = await request.json();
         try {
           await navigator.clipboard.writeText(`${SITE_URL}/m3u`);
 
-          // Show alert
           alert("Link a la lista IPTV Copiada al portapapeles");
         } catch (err) {
           console.error("Error copiando texto: ", err);
