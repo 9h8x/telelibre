@@ -1,8 +1,10 @@
 ---
+export const prerender = false
+const { env } = Astro.locals.runtime;
 import { buttonVariants } from "@/components/ui/button";
 import Layout from "../layouts/Layout.astro";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-const SITE_URL = import.meta.env.SITE_URL;
+const SITE_URL = env.SITE_URL;
 const request = await fetch(`${SITE_URL}/api/canales`);
 const canales = await request.json();
 ---

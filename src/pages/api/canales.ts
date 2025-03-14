@@ -1,13 +1,18 @@
 // src/pages/api/canales.ts
+
+export const prerender = false;
+
 import { createClient } from "@supabase/supabase-js";
 
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-export async function GET({ request }) {
+export async function GET({ request, locals }) {
   try {
+    const { env } = locals.runtime;
+    
+    // Initialize Supabase client with Cloudflare runtime env vars
+    const supabaseUrl = env.SUPABASE_URL;
+    const supabaseKey = env.SUPABASE_ANON_KEY;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     // Fetch data from Supabase instead of local file
     const { data, error } = await supabase.from("channels").select("*");
 

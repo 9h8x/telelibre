@@ -1,3 +1,5 @@
+export const prerender = false
+
 export async function POST({ request }) {
   try {
     // Parse the request body to extract username, password, and tenantId

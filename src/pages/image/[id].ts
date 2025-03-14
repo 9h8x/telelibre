@@ -1,10 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
 
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 // Define special image mappings for specific image IDs
 const SPECIAL_IMAGE_MAPPINGS = {
   // Use image IDs as keys (the numbers after /image/)
@@ -15,9 +10,18 @@ const SPECIAL_IMAGE_MAPPINGS = {
 const DEFAULT_FALLBACK_IMAGE =
   "https://placehold.co/300x200?text=No+Image+Available";
 
-export async function GET({ params }) {
+export async function GET({ request, locals }) {
   try {
-    const { id: imageId } = params; // This is the image ID from the URL
+    const { env } = locals.runtime;
+
+    // Initialize Supabase client using environment variables from runtime
+    const supabaseUrl = env.SUPABASE_URL;
+    const supabaseKey = env.SUPABASE_ANON_KEY;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Extract the image ID from the URL
+    const url = new URL(request.url);
+    const imageId = url.pathname.split("/").pop();
 
     if (!imageId) {
       // Redirect to default fallback if no ID is provided
@@ -150,8 +154,8 @@ function redirectToFallback() {
 }
 
 // Helper function to get MIME type based on file extension
-function getMimeType(extension: string) {
-  const mimeTypes: Record<string, string> = {
+function getMimeType(extension) {
+  const mimeTypes = {
     jpg: "image/jpeg",
     jpeg: "image/jpeg",
     png: "image/png",

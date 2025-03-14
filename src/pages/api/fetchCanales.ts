@@ -1,17 +1,21 @@
 import { createClient } from "@supabase/supabase-js";
+export const prerender = false;
 
-const SITE_URL = import.meta.env.SITE_URL;
-const USERNAME = import.meta.env.AUTH_USERNAME;
-const PASSWORD = import.meta.env.AUTH_PASSWORD;
-const TENANT_ID = import.meta.env.AUTH_TENANT_ID;
-
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-export async function GET({ request }) {
+export async function GET({ request, locals }) {
   try {
+    const { env } = locals.runtime;
+
+    // Access environment variables from Cloudflare runtime
+    const SITE_URL = env.SITE_URL;
+    const USERNAME = env.AUTH_USERNAME;
+    const PASSWORD = env.AUTH_PASSWORD;
+    const TENANT_ID = env.AUTH_TENANT_ID;
+
+    // Initialize Supabase client with Cloudflare runtime env vars
+    const supabaseUrl = env.SUPABASE_URL;
+    const supabaseKey = env.SUPABASE_ANON_KEY;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     // Authenticate and get the session key
     async function authenticate(
       username: string,
@@ -136,7 +140,6 @@ export async function GET({ request }) {
       return obj;
     };
 
-    // Process new data
     // Process new data
     const processedData = newData
       .filter((channel) => channel.id !== 1032) // Filter out unwanted channels
