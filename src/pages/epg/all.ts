@@ -135,7 +135,7 @@ async function exhaustiveFetch(
         const data = await response.json();
 
         // Check if we have valid EPG data
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           console.log(
             `[SUCCESS] Found valid EPG data from ${baseUrl} (${data.length} programs)`
           );
@@ -299,7 +299,6 @@ export async function GET({ request, locals }) {
       acc[url] = 0;
       return acc;
     }, {});
-
     // Count channels with valid EPG data
     let channelsWithValidEpg = 0;
 
@@ -319,6 +318,14 @@ export async function GET({ request, locals }) {
         1
       )}%)`
     );
+
+
+    // Function or code block where you assign the value
+    globalThis.summaryString = `Successfully fetched EPG for ${channelsWithValidEpg}/${
+      channels.length
+    } channels (${((channelsWithValidEpg / channels.length) * 100).toFixed(
+      1
+    )}%) - ${JSON.stringify(sourceStats)}`;
 
     // Return the data in the requested format
     if (format === "xmltv") {
@@ -434,7 +441,7 @@ function convertToXMLTV(channelsWithEPG) {
 
   // Add programme information for all channels
   channelsWithEPG.forEach((channel) => {
-    if (channel.epg && Array.isArray(channel.epg) && channel.epg.length > 0) {
+    if (channel.epg && Array.isArray(channel.epg)) {
       channel.epg.forEach((programme) => {
         if (programme.startTime && programme.endTime) {
           xmltv += `  <programme start="${formatDate(
@@ -478,8 +485,8 @@ function convertToXMLTV(channelsWithEPG) {
     }
   });
 
-  // Close the TV tag
   xmltv += "</tv>";
-
+  xmltv += `<note>${summaryString}</note>`;
+  
   return xmltv;
 }
