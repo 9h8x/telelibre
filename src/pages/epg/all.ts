@@ -1,4 +1,3 @@
-// File: src/pages/api/epg/all.ts
 import type { APIRoute } from "astro";
 import { createClient } from "@supabase/supabase-js";
 
@@ -31,16 +30,86 @@ interface EPGItem {
 }
 
 /**
+ * Shuffles an array using Fisher-Yates algorithm
+ * @param array The array to shuffle
+ * @returns A new shuffled array
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+/**
+ * Fetches data from a URL with retry logic
+ * @param url The URL to fetch from
+ * @param options Fetch options
+ * @param maxRetries Maximum number of retry attempts
+ * @param baseDelay Base delay between retries in ms
+ * @returns The fetch response or throws an error
+ */
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit = {},
+  maxRetries: number = 5,
+  baseDelay: number = 300
+): Promise<{ data: any; status: number }> {
+  let lastError: Error;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      // Set a timeout for each request (5 seconds)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return { data, status: response.status };
+    } catch (error) {
+      lastError = error;
+      console.error(
+        `Attempt ${attempt + 1}/${maxRetries} failed for ${url}:`,
+        error.message
+      );
+
+      // Don't delay on the last attempt
+      if (attempt < maxRetries - 1) {
+        // Exponential backoff with jitter
+        const delay = baseDelay * Math.pow(2, attempt) * (0.5 + Math.random());
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw lastError;
+}
+
+/**
  * Fetches data from multiple base URLs in parallel
  * @param baseUrls Array of base URLs to fetch from
  * @param endpoint The endpoint to append to each base URL
  * @param options Optional fetch options
+ * @param maxRetries Maximum number of retry attempts per URL
  * @returns Object with successful and failed responses
  */
 async function fetchFromMultipleUrls(
   baseUrls: string[],
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  maxRetries: number = 5
 ) {
   // Add default headers if not provided
   const fetchOptions = {
@@ -55,30 +124,23 @@ async function fetchFromMultipleUrls(
     ...options,
   };
 
+  // Shuffle the base URLs for randomization
+  const shuffledUrls = shuffleArray(baseUrls);
+
   // Create an array of promises for each fetch request
-  const fetchPromises = baseUrls.map(async (baseUrl) => {
+  const fetchPromises = shuffledUrls.map(async (baseUrl) => {
     const url = `${baseUrl}${endpoint}`;
     try {
-      // Set a timeout for each request (5 seconds)
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      console.log(`Attempting to fetch from ${baseUrl}`);
+      const { data, status } = await fetchWithRetry(
+        url,
+        fetchOptions,
+        maxRetries
+      );
 
-      const response = await fetch(url, {
-        ...fetchOptions,
-        signal: controller.signal,
-      });
-      console.log(`Fetching from ${baseUrl}`)
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return { url: baseUrl, data, status: response.status };
+      return { url: baseUrl, data, status };
     } catch (error) {
-      console.error(`Error fetching from ${url}:`, error);
+      console.error(`All retries failed for ${url}:`, error.message);
       return {
         url: baseUrl,
         error: error.message,
@@ -154,27 +216,48 @@ export async function GET({ request, locals }) {
 
           // Try to fetch EPG data from multiple sources
           const epgEndpoint = `/sb/public/epg/channel/${channel.id}?tenantId=${tenantId}`;
-          const results = await fetchFromMultipleUrls(baseUrls, epgEndpoint);
+          const results = await fetchFromMultipleUrls(
+            baseUrls,
+            epgEndpoint,
+            {},
+            5
+          );
 
           // Use the first successful response, or return empty EPG if all failed
           if (results.success.length > 0) {
-            const epgData = results.success[0].data;
-            console.log(
-              `Successfully fetched EPG for channel ${channel.id} from ${results.success[0].url}`
+            // Find the first response with valid EPG data (non-empty array)
+            const validResponse = results.success.find(
+              (response) =>
+                Array.isArray(response.data) && response.data.length > 0
             );
 
-            // Filter out items with state "CATCHUP"
-            const filteredEPG = epgData
+            if (validResponse) {
+              const epgData = validResponse.data;
+              console.log(
+                `Successfully fetched EPG for channel ${channel.id} from ${validResponse.url} (${epgData.length} programs)`
+              );
 
+              return {
+                ...channel,
+                imageUrl: channel.logoPublicUrl,
+                epg: epgData,
+                epgSource: validResponse.url,
+              };
+            }
+
+            // If no valid EPG data found in successful responses
+            console.log(
+              `No valid EPG data found for channel ${channel.id} despite successful responses`
+            );
             return {
               ...channel,
-              imageUrl: channel.logoPublicUrl, // Use logoPublicUrl as imageUrl
-              epg: filteredEPG,
-              epgSource: results.success[0].url, // Track which source was used
+              imageUrl: channel.logoPublicUrl,
+              epg: [],
+              epgSource: null,
             };
           } else {
             console.error(
-              `Failed to fetch EPG for channel ${channel.id} from all sources`
+              `Failed to fetch EPG for channel ${channel.id} from all sources after retries`
             );
             return {
               ...channel,
@@ -201,13 +284,20 @@ export async function GET({ request, locals }) {
       return acc;
     }, {});
 
+    // Count channels with valid EPG data
+    let channelsWithValidEpg = 0;
+
     channelsWithEPG.forEach((channel) => {
-      if (channel.epgSource) {
+      if (channel.epgSource && channel.epg && channel.epg.length > 0) {
         sourceStats[channel.epgSource]++;
+        channelsWithValidEpg++;
       }
     });
 
     console.log("EPG source statistics:", sourceStats);
+    console.log(
+      `Successfully fetched EPG for ${channelsWithValidEpg}/${channels.length} channels`
+    );
 
     // Return the data in the requested format
     if (format === "xmltv") {
@@ -227,9 +317,7 @@ export async function GET({ request, locals }) {
           meta: {
             sourceStats,
             totalChannels: channels.length,
-            channelsWithEpg: channelsWithEPG.filter(
-              (c) => c.epg && c.epg.length > 0
-            ).length,
+            channelsWithEpg: channelsWithValidEpg,
           },
         }),
         {
@@ -321,7 +409,7 @@ function convertToXMLTV(channelsWithEPG) {
 
   // Add programme information for all channels
   channelsWithEPG.forEach((channel) => {
-    if (channel.epg && Array.isArray(channel.epg)) {
+    if (channel.epg && Array.isArray(channel.epg) && channel.epg.length > 0) {
       channel.epg.forEach((programme) => {
         if (programme.startTime && programme.endTime) {
           xmltv += `  <programme start="${formatDate(
