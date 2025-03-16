@@ -297,6 +297,9 @@ async function main() {
           ? cleanedChannel.logoUrl.replace("/sb", "")
           : cleanedChannel.logoUrl;
 
+        const epgUrl = cleanedChannel.epgUrl.includes("/sb")
+          ? cleanedChannel.epgUrl.replace("/sb", "")
+          : cleanedChannel.epgUrl;
         // Extract just the ID by removing the /image/ prefix
         const imageId = savedLogoUrl.replace("/image/", "");
 
@@ -311,6 +314,7 @@ async function main() {
             hlsFP: cleanedChannel.contentUrls?.hlsFP,
             dash: cleanedChannel.contentUrls?.dash,
           },
+          epgUrl: epgUrl,
           imageUrl: savedLogoUrl, // Keep the full path for reference
           id: originalId, // Use the original ID, not the cleaned one
         };
