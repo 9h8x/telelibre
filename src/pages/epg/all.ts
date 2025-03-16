@@ -288,7 +288,7 @@ export async function GET({ request, locals }) {
     let channelsWithValidEpg = 0;
 
     channelsWithEPG.forEach((channel) => {
-      if (channel.epgSource && channel.epg && channel.epg.length > 0) {
+      if (channel.epgSource && channel.epg) {
         sourceStats[channel.epgSource]++;
         channelsWithValidEpg++;
       }
