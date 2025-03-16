@@ -3,16 +3,29 @@ import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout>
+  <div class="w-full bg-blue-500 text-white pb-2">
+    <p class="text-center">
+      Se aceptan donaciones en criptomonedas y pesos argentinos, contactar al email o discord para donar
+    </p>
+  </div>
   <!-- Aligning the button to the top left -->
   <a href="/" class="absolute top-4 left-4 px-8 text-blue-700 hover:underline"
     >Volver al inicio</a
   >
 
   <div class="px-8 py-8">
-    <h1 class="text-center text-2xl mb-4">Información</h1>
+    <h1 class="text-center text-2xl">Información</h1>
     <p class="text-center">
-      La página la hice en menos de cuatro horas. Si anda mal, no se quejen.
+      La página la voy a acutalizar regularmente, el reproductor no anda perfectamente pero la lista IPTV funciona en cualquier reproductor
     </p>
+    <p class="text-center">Para consultas y sugerencias contactar usando los medios que estan al final de la pagina.</p>
+    <p class="text-center">Es un proyecto mantenido por un solo desarrollador, sin fines de lucro y por ende, se aprecian donaciones</p>
+    <p class="text-center">
+      El día en el que me manden un <i>cease and desist</i> o algo similar, voy a
+      publicar todo el código fuente y lo voy a linkear acá.
+    </p>
+
+    <h1 class="text-center text-2xl mt-8">APIs</h1>
     <p class="text-center">
       Para los que quieren ver los links de los streams, hay un endpoint en <a
         href="/api/canales"
@@ -20,12 +33,15 @@ import Layout from "@/layouts/Layout.astro";
       > con un JSON para los que quieran la lista. Incluye los links del manifest
       y los m3u8.
     </p>
+    <p class="text-center">Para los que quieran buscar un canal especifico en la guia pueden usar /api/epg/id del canal y si quieren la guia entera, <a href="/epg/all?format=json" class="text-blue-500">/epg/all?format=json</a> o <a href="/epg/all?format=xmltv" class="text-blue-500">/epg/all?format=xmltv</a> para elegir el formato</p>
+    <h1 class="text-center text-2xl mt-8">Contacto</h1>
     <p class="text-center">
-      El día en el que me manden un <i>cease and desist</i> o algo similar, voy a
-      publicar todo el código fuente y lo voy a linkear acá.
+      Pueden contactarme por email: <a
+        class="text-blue-500"
+        href="mailto:telelibre@proton.me">telelibre@proton.me</a
+      > o por discord: <a
+        class="text-blue-500"
+        href="https://discord.com/users/1300221955248623738">telelibre</a>
     </p>
-
-    <h1 class="text-center text-2xl my-8">Contacto</h1>
-    <p class="text-center">Pueden contactarme por email: <a class="text-blue-500" href="mailto:telelibre@proton.me">telelibre@proton.me</a> o por discord: <a class="text-blue-500" href="https://discord.com/users/1300221955248623738">telelibre</a></p>
   </div>
 </Layout>
