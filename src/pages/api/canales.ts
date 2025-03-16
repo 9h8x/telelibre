@@ -23,7 +23,7 @@ export async function GET({ request, locals }) {
       JSON.stringify({
         message:
           "Si estas viendo esto es porque sos muy curioso o porque sos alguien de SYT preguntandose como obtuve todo esto",
-        contact: "Email: admin@telelibre.site | Discord: telelibre",
+        contact: "Email: telelibre@proton.me | Discord: telelibre",
         success: true,
         data: data,
       }),
