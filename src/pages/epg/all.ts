@@ -106,7 +106,7 @@ async function fetchFromMultipleUrls(
   };
 }
 
-export async function GET({ request }) {
+export async function GET({ request, locals }) {
   try {
     const url = new URL(request.url);
     const format = url.searchParams.get("format")?.toLowerCase() || "json";
@@ -115,11 +115,11 @@ export async function GET({ request }) {
     // Initialize Supabase client
     // Environment variables should be set for both production and development
     const supabaseUrl = import.meta.env.PROD
-      ? Astro.locals.runtime.env.SUPABASE_URL
+      ? locals.runtime.env.SUPABASE_URL
       : import.meta.env.SUPABASE_URL;
 
     const supabaseKey = import.meta.env.PROD
-      ? Astro.locals.runtime.env.SUPABASE_ANON_KEY
+      ? locals.runtime.env.SUPABASE_ANON_KEY
       : import.meta.env.SUPABASE_ANON_KEY;
 
     const supabase = createClient(supabaseUrl, supabaseKey);
