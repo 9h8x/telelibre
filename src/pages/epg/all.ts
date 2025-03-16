@@ -29,6 +29,29 @@ interface EPGItem {
   // Add other fields as needed
 }
 
+// Track debugging information
+interface DebugInfo {
+  failedChannels: {
+    id: number;
+    name: string;
+    attempts: number;
+    lastError: string;
+  }[];
+  successfulFetches: Record<string, number>;
+  totalAttempts: number;
+  totalSuccesses: number;
+  totalFailures: number;
+}
+
+// Global debug tracking
+const debugInfo: DebugInfo = {
+  failedChannels: [],
+  successfulFetches: {},
+  totalAttempts: 0,
+  totalSuccesses: 0,
+  totalFailures: 0,
+};
+
 /**
  * Shuffles an array using Fisher-Yates algorithm
  * @param array The array to shuffle
@@ -48,18 +71,24 @@ function shuffleArray<T>(array: T[]): T[] {
  * Will keep trying until successful or all options are exhausted
  * @param baseUrls Array of base URLs to try
  * @param endpoint The endpoint to append to each base URL
+ * @param channelId The channel ID for debugging purposes
+ * @param channelName The channel name for debugging purposes
  * @param options Fetch options
  * @returns The successful response or null if all attempts fail
  */
 async function exhaustiveFetch(
   baseUrls: string[],
   endpoint: string,
+  channelId: number,
+  channelName: string,
   options: RequestInit = {}
 ): Promise<{ url: string; data: any } | null> {
   // Create a copy and shuffle the URLs to randomize the initial order
   const urlsToTry = shuffleArray([...baseUrls]);
   const triedUrls = new Set<string>();
   const maxAttemptsPerUrl = 5;
+  let channelAttempts = 0;
+  let lastError = "";
 
   // Add default headers if not provided
   const fetchOptions = {
@@ -75,7 +104,7 @@ async function exhaustiveFetch(
   };
 
   let attemptCount = 0;
-  const maxTotalAttempts = 100; // Safety limit to prevent infinite loops
+  const maxTotalAttempts = 150; // Increased from 100 to 150 for more attempts
 
   while (urlsToTry.length > 0 && attemptCount < maxTotalAttempts) {
     // Get the next URL to try
@@ -87,15 +116,17 @@ async function exhaustiveFetch(
     while (attemptsForThisUrl < maxAttemptsPerUrl) {
       attemptCount++;
       attemptsForThisUrl++;
+      channelAttempts++;
+      debugInfo.totalAttempts++;
 
       try {
         console.log(
-          `[Attempt ${attemptCount}] Trying ${baseUrl} (attempt ${attemptsForThisUrl}/${maxAttemptsPerUrl} for this URL)`
+          `[Attempt ${attemptCount}] Trying ${baseUrl} for channel ${channelId} (${channelName}) (attempt ${attemptsForThisUrl}/${maxAttemptsPerUrl} for this URL)`
         );
 
-        // Set a timeout for each request (5 seconds)
+        // Set a timeout for each request (6 seconds, increased from 5)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
 
         const response = await fetch(fullUrl, {
           ...fetchOptions,
@@ -106,8 +137,9 @@ async function exhaustiveFetch(
 
         if (!response.ok) {
           console.log(
-            `[Attempt ${attemptCount}] HTTP error ${response.status} from ${baseUrl}`
+            `[Attempt ${attemptCount}] HTTP error ${response.status} from ${baseUrl} for channel ${channelId}`
           );
+          lastError = `HTTP error ${response.status} from ${baseUrl}`;
 
           // For HTTP errors, switch to next URL immediately on first attempt
           if (attemptsForThisUrl === 1) {
@@ -135,24 +167,59 @@ async function exhaustiveFetch(
         const data = await response.json();
 
         // Check if we have valid EPG data
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           console.log(
-            `[SUCCESS] Found valid EPG data from ${baseUrl} (${data.length} programs)`
-          );
-          return { url: baseUrl, data };
-        } else {
-          console.log(
-            `[Attempt ${attemptCount}] Response from ${baseUrl} contained no EPG data`
+            `[SUCCESS] Found valid EPG data from ${baseUrl} for channel ${channelId} (${data.length} programs)`
           );
 
-          // Empty data, switch to next URL immediately
+          // Track successful fetch
+          debugInfo.successfulFetches[baseUrl] =
+            (debugInfo.successfulFetches[baseUrl] || 0) + 1;
+          debugInfo.totalSuccesses++;
+
+          return { url: baseUrl, data };
+        } else if (Array.isArray(data) && data.length === 0) {
+          console.log(
+            `[EMPTY] Response from ${baseUrl} for channel ${channelId} contained empty EPG data array`
+          );
+          lastError = `Empty EPG data array from ${baseUrl}`;
+
+          // Empty array is technically valid, but we'll try another source
+          if (attemptsForThisUrl === 1) {
+            console.log(
+              `First attempt returned empty data, switching to next URL`
+            );
+            break;
+          }
+
+          // If we've reached max attempts for this URL, move to the next one
+          if (attemptsForThisUrl >= maxAttemptsPerUrl) {
+            console.log(
+              `Max attempts (${maxAttemptsPerUrl}) reached for ${baseUrl}, switching to next URL`
+            );
+            break;
+          }
+
+          // Wait before retry
+          const delay =
+            300 * Math.pow(1.5, attemptsForThisUrl) * (0.5 + Math.random());
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        } else {
+          console.log(
+            `[INVALID] Response from ${baseUrl} for channel ${channelId} contained invalid data format`
+          );
+          lastError = `Invalid data format from ${baseUrl}`;
+
+          // Invalid data, switch to next URL immediately
           break;
         }
       } catch (error) {
         console.error(
-          `[Attempt ${attemptCount}] Error from ${baseUrl}:`,
+          `[Attempt ${attemptCount}] Error from ${baseUrl} for channel ${channelId}:`,
           error.message
         );
+        lastError = `Error: ${error.message} from ${baseUrl}`;
 
         // For network/timeout errors, switch to next URL immediately on first attempt
         if (attemptsForThisUrl === 1) {
@@ -182,7 +249,7 @@ async function exhaustiveFetch(
     // This implements unlimited retries across all sources
     if (urlsToTry.length === 0 && triedUrls.size === baseUrls.length) {
       console.log(
-        `[RETRY ALL] Exhausted all URLs, starting over with all URLs`
+        `[RETRY ALL] Exhausted all URLs for channel ${channelId}, starting over with all URLs`
       );
 
       // Get all URLs that aren't currently in the queue
@@ -199,9 +266,44 @@ async function exhaustiveFetch(
 
   // If we get here, we've exhausted all options
   console.error(
-    `[FAILED] Could not fetch data after ${attemptCount} total attempts across all URLs`
+    `[FAILED] Could not fetch data for channel ${channelId} after ${attemptCount} total attempts across all URLs`
   );
+
+  // Track failed channel
+  debugInfo.failedChannels.push({
+    id: channelId,
+    name: channelName,
+    attempts: channelAttempts,
+    lastError,
+  });
+  debugInfo.totalFailures++;
+
   return null;
+}
+
+/**
+ * Generate a fallback EPG entry for a channel that failed to fetch data
+ * @param channelId The channel ID
+ * @returns A minimal EPG entry with current date
+ */
+function generateFallbackEPG(channelId: number): EPGItem[] {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  return [
+    {
+      id: 0,
+      title: "Programación no disponible",
+      startTime: now.toISOString(),
+      endTime: tomorrow.toISOString(),
+      description:
+        "La programación para este canal no está disponible en este momento.",
+      pgRating: { name: "ATP" },
+      imageUrl: "",
+      state: "scheduled",
+    },
+  ];
 }
 
 export async function GET({ request, locals }) {
@@ -209,6 +311,7 @@ export async function GET({ request, locals }) {
     const url = new URL(request.url);
     const format = url.searchParams.get("format")?.toLowerCase() || "json";
     const tenantId = url.searchParams.get("tenantId") || "1";
+    const debug = url.searchParams.get("debug") === "true";
 
     // Initialize Supabase client
     const supabaseUrl = import.meta.env.PROD
@@ -241,7 +344,18 @@ export async function GET({ request, locals }) {
       "https://iptelplay.com.ar",
       "https://olatv.com.ar",
       "https://play.xg.ar",
+      "http://tv.netium.com.ar",
+      "https://clicktv.com.ar",
+      "https://tv.quilik.com.ar"
+      // Add more fallback URLs if needed
     ];
+
+    // Reset debugging information
+    debugInfo.failedChannels = [];
+    debugInfo.successfulFetches = {};
+    debugInfo.totalAttempts = 0;
+    debugInfo.totalSuccesses = 0;
+    debugInfo.totalFailures = 0;
 
     // Fetch EPG data for each channel with unlimited retries
     const channelsWithEPG = await Promise.all(
@@ -253,9 +367,17 @@ export async function GET({ request, locals }) {
             }) ==========`
           );
 
+          const channelName =
+            channel.displayName || channel.name || `Channel ${channel.number}`;
+
           // Try to fetch EPG data using our exhaustive fetch method
           const epgEndpoint = `/sb/public/epg/channel/${channel.id}?tenantId=${tenantId}`;
-          const result = await exhaustiveFetch(baseUrls, epgEndpoint);
+          const result = await exhaustiveFetch(
+            baseUrls,
+            epgEndpoint,
+            channel.id,
+            channelName
+          );
 
           if (result) {
             console.log(
@@ -272,11 +394,15 @@ export async function GET({ request, locals }) {
             console.error(
               `❌ Failed to fetch EPG for channel ${channel.id} after exhausting all options`
             );
+
+            // Generate fallback EPG data
+            const fallbackEpg = generateFallbackEPG(channel.id);
+
             return {
               ...channel,
               imageUrl: channel.logoPublicUrl,
-              epg: [],
-              epgSource: null,
+              epg: fallbackEpg,
+              epgSource: "fallback",
             };
           }
         } catch (error) {
@@ -284,11 +410,15 @@ export async function GET({ request, locals }) {
             `❌ Unexpected error fetching EPG for channel ${channel.id}:`,
             error
           );
+
+          // Generate fallback EPG data
+          const fallbackEpg = generateFallbackEPG(channel.id);
+
           return {
             ...channel,
             imageUrl: channel.logoPublicUrl,
-            epg: [],
-            epgSource: null,
+            epg: fallbackEpg,
+            epgSource: "fallback",
           };
         }
       })
@@ -299,15 +429,29 @@ export async function GET({ request, locals }) {
       acc[url] = 0;
       return acc;
     }, {});
+
+    // Add fallback to sourceStats
+    sourceStats["fallback"] = 0;
+
+    // Count channels with valid EPG data
     // Count channels with valid EPG data
     let channelsWithValidEpg = 0;
+    let channelsWithFallbackEpg = 0;
 
     channelsWithEPG.forEach((channel) => {
-      if (channel.epgSource && channel.epg) {
+      if (channel.epgSource && channel.epg && channel.epg.length > 0) {
         sourceStats[channel.epgSource]++;
-        channelsWithValidEpg++;
+
+        if (channel.epgSource === "fallback") {
+          channelsWithFallbackEpg++;
+        } else {
+          channelsWithValidEpg++;
+        }
       }
     });
+
+    // All channels now have at least fallback EPG
+    const totalValidChannels = channelsWithValidEpg + channelsWithFallbackEpg;
 
     console.log("\n========== SUMMARY ==========");
     console.log("EPG source statistics:", sourceStats);
@@ -318,18 +462,40 @@ export async function GET({ request, locals }) {
         1
       )}%)`
     );
+    console.log(`Fallback EPG added for ${channelsWithFallbackEpg} channels`);
+    console.log(
+      `Total channels with EPG data: ${totalValidChannels}/${
+        channels.length
+      } (${((totalValidChannels / channels.length) * 100).toFixed(1)}%)`
+    );
 
+    // Create detailed summary with debugging information
+    let debugSummary = "";
+    if (debugInfo.failedChannels.length > 0) {
+      debugSummary =
+        `\nFailed channels (${debugInfo.failedChannels.length}): ` +
+        debugInfo.failedChannels
+          .map(
+            (c) =>
+              `ID ${c.id} (${c.name}): ${c.lastError} after ${c.attempts} attempts`
+          )
+          .join("; ");
+    }
 
-    // Function or code block where you assign the value
-    globalThis.summaryString = `Successfully fetched EPG for ${channelsWithValidEpg}/${
+    // Create the main summary string
+    const summaryString = `Successfully fetched EPG for ${channelsWithValidEpg}/${
       channels.length
     } channels (${((channelsWithValidEpg / channels.length) * 100).toFixed(
       1
-    )}%) - ${JSON.stringify(sourceStats)}`;
+    )}%) + ${channelsWithFallbackEpg} fallback entries = ${totalValidChannels}/${
+      channels.length
+    } total (${((totalValidChannels / channels.length) * 100).toFixed(
+      1
+    )}%) - ${JSON.stringify(sourceStats)}${debugSummary}`;
 
     // Return the data in the requested format
     if (format === "xmltv") {
-      const xmltv = convertToXMLTV(channelsWithEPG);
+      const xmltv = convertToXMLTV(channelsWithEPG, summaryString);
       return new Response(xmltv, {
         status: 200,
         headers: {
@@ -345,11 +511,18 @@ export async function GET({ request, locals }) {
           meta: {
             sourceStats,
             totalChannels: channels.length,
-            channelsWithEpg: channelsWithValidEpg,
+            channelsWithValidEpg,
+            channelsWithFallbackEpg,
+            totalValidChannels,
             successRate: `${(
               (channelsWithValidEpg / channels.length) *
               100
             ).toFixed(1)}%`,
+            totalRate: `${(
+              (totalValidChannels / channels.length) *
+              100
+            ).toFixed(1)}%`,
+            debug: debug ? debugInfo : undefined,
           },
         }),
         {
@@ -382,9 +555,10 @@ export async function GET({ request, locals }) {
 /**
  * Convert channel and EPG data to XMLTV format
  * @param channelsWithEPG Array of channels with their EPG data
+ * @param summaryString Summary string to include in the note tag
  * @returns XMLTV formatted string
  */
-function convertToXMLTV(channelsWithEPG) {
+function convertToXMLTV(channelsWithEPG, summaryString) {
   const formatDate = (isoString) => {
     // Convert ISO date to XMLTV format (yyyyMMddHHmmss +0000)
     const date = new Date(isoString);
@@ -472,7 +646,7 @@ function convertToXMLTV(channelsWithEPG) {
           }
 
           // Add image if available
-          if (programme.imageUrl) {
+          if (programme.imageUrl && channel.epgSource !== "fallback") {
             // Use the source URL that successfully provided the EPG data
             const baseUrl =
               channel.epgSource || "https://stv.supportinternet.com.ar";
@@ -486,7 +660,11 @@ function convertToXMLTV(channelsWithEPG) {
   });
 
   xmltv += "</tv>";
-  xmltv += `<note>${summaryString}</note>`;
-  
+
+  // Add the summary note if available
+  if (summaryString) {
+    xmltv += `\n<note>${escapeXML(summaryString)}</note>`;
+  }
+
   return xmltv;
 }
