@@ -148,9 +148,12 @@ const fetchImageFromAllBaseUrls = async (
   imageId,
   timeoutMs = 10000
 ) => {
+  // Make sure logoPath has /sb prefix for fetching
+  const fetchPath = logoPath.includes("/sb") ? logoPath : `/sb${logoPath}`;
+
   // Try with a random base URL first
   let initialBaseUrl = getRandomBaseUrl();
-  let imageUrl = `${initialBaseUrl}${logoPath}`;
+  let imageUrl = `${initialBaseUrl}${fetchPath}`;
 
   try {
     const response = await fetchWithTimeout(imageUrl, timeoutMs);
@@ -165,12 +168,12 @@ const fetchImageFromAllBaseUrls = async (
   }
 
   // If the first attempt failed, try with each base URL sequentially
-  console.log(`Trying all base URLs for ${logoPath} (image ID: ${imageId})`);
+  console.log(`Trying all base URLs for ${fetchPath} (image ID: ${imageId})`);
 
   for (const baseUrl of baseUrls) {
     if (baseUrl === initialBaseUrl) continue; // Skip the one we already tried
 
-    imageUrl = `${baseUrl}${logoPath}`;
+    imageUrl = `${baseUrl}${fetchPath}`;
     try {
       const response = await fetchWithTimeout(imageUrl, timeoutMs);
       if (response.ok) {
@@ -183,7 +186,7 @@ const fetchImageFromAllBaseUrls = async (
   }
 
   throw new Error(
-    `Image not found on any base URL: ${logoPath} (image ID: ${imageId})`
+    `Image not found on any base URL: ${fetchPath} (image ID: ${imageId})`
   );
 };
 
@@ -289,11 +292,6 @@ async function main() {
 
         const cleanedChannel = cleanObjectStrings(channel);
 
-        // For fetching we need to add "/sb" to the logo URL
-        const fetchLogoUrl = cleanedChannel.logoUrl.includes("/sb")
-          ? cleanedChannel.logoUrl
-          : `/sb${cleanedChannel.logoUrl}`;
-
         // For saving data we need to use "/image/id" instead of "/sb/image/id"
         const savedLogoUrl = cleanedChannel.logoUrl.includes("/sb")
           ? cleanedChannel.logoUrl.replace("/sb", "")
@@ -314,7 +312,6 @@ async function main() {
             dash: cleanedChannel.contentUrls?.dash,
           },
           imageUrl: savedLogoUrl, // Keep the full path for reference
-          fetchLogoUrl: fetchLogoUrl, // Keep the fetch URL for downloading images
           id: originalId, // Use the original ID, not the cleaned one
         };
       })
@@ -327,6 +324,26 @@ async function main() {
 
     console.log(`Processed ${processedData.length} channels`);
 
+    // Fetch existing channel data to preserve logoPublicUrl values
+    console.log("Fetching existing channel data to preserve logo URLs...");
+    const { data: existingChannels, error: fetchError } = await supabase
+      .from("channels")
+      .select("id, logoPublicUrl");
+
+    if (fetchError) {
+      console.error("Error fetching existing channel data:", fetchError);
+    }
+
+    // Create a map of existing logoPublicUrl values by channel ID
+    const existingLogoUrls = {};
+    if (existingChannels) {
+      existingChannels.forEach((channel) => {
+        if (channel.logoPublicUrl) {
+          existingLogoUrls[channel.id] = channel.logoPublicUrl;
+        }
+      });
+    }
+
     // Clear existing data in Supabase
     console.log("Clearing existing channel data...");
     const { error: deleteError } = await supabase
@@ -337,6 +354,16 @@ async function main() {
     if (deleteError) {
       console.error("Error clearing existing channel data:", deleteError);
     }
+
+    // Add existing logoPublicUrl values to the processed data
+    processedData.forEach((channel) => {
+      if (existingLogoUrls[channel.id]) {
+        channel.logoPublicUrl = existingLogoUrls[channel.id];
+        console.log(
+          `Preserved existing logo URL for channel ${channel.id}: ${channel.logoPublicUrl}`
+        );
+      }
+    });
 
     // Insert the new channel data
     console.log("Inserting new channel data...");
@@ -353,7 +380,7 @@ async function main() {
     // Download and store channel logos
     console.log("Processing channel logos...");
     const imageUploadPromises = processedData.map(async (item) => {
-      if (item.fetchLogoUrl && item.id) {
+      if (item.logoUrl && item.id) {
         try {
           // Extract the image ID from the imageUrl (remove "/image/" prefix)
           const imageId = item.imageUrl.replace("/image/", "");
@@ -372,9 +399,10 @@ async function main() {
             return;
           }
 
-          // Fetch the image
+          // Fetch the image - using the logoUrl directly
+          // Fetch the image - using the logoUrl directly
           const { response, baseUrl } = await fetchImageFromAllBaseUrls(
-            item.fetchLogoUrl,
+            item.logoUrl, // Use logoUrl directly for fetching
             imageId.toString(), // Use image ID for logging
             10000
           );
@@ -434,6 +462,10 @@ async function main() {
               error.message
             }`
           );
+
+          // If there was an error uploading the new image but we have an existing URL,
+          // make sure we don't lose it (it's already preserved in the initial insert)
+          console.log(`Keeping existing logo URL for channel ${item.id}`);
         }
       }
     });
