@@ -44,73 +44,23 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 /**
- * Fetches data from a URL with retry logic
- * @param url The URL to fetch from
- * @param options Fetch options
- * @param maxRetries Maximum number of retry attempts
- * @param baseDelay Base delay between retries in ms
- * @returns The fetch response or throws an error
- */
-async function fetchWithRetry(
-  url: string,
-  options: RequestInit = {},
-  maxRetries: number = 5,
-  baseDelay: number = 300
-): Promise<{ data: any; status: number }> {
-  let lastError: Error;
-
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      // Set a timeout for each request (5 seconds)
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return { data, status: response.status };
-    } catch (error) {
-      lastError = error;
-      console.error(
-        `Attempt ${attempt + 1}/${maxRetries} failed for ${url}:`,
-        error.message
-      );
-
-      // Don't delay on the last attempt
-      if (attempt < maxRetries - 1) {
-        // Exponential backoff with jitter
-        const delay = baseDelay * Math.pow(2, attempt) * (0.5 + Math.random());
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-    }
-  }
-
-  throw lastError;
-}
-
-/**
- * Fetches data from multiple base URLs in parallel
- * @param baseUrls Array of base URLs to fetch from
+ * Exhaustively tries to fetch EPG data for a channel using all available URLs
+ * Will keep trying until successful or all options are exhausted
+ * @param baseUrls Array of base URLs to try
  * @param endpoint The endpoint to append to each base URL
- * @param options Optional fetch options
- * @param maxRetries Maximum number of retry attempts per URL
- * @returns Object with successful and failed responses
+ * @param options Fetch options
+ * @returns The successful response or null if all attempts fail
  */
-async function fetchFromMultipleUrls(
+async function exhaustiveFetch(
   baseUrls: string[],
   endpoint: string,
-  options: RequestInit = {},
-  maxRetries: number = 5
-) {
+  options: RequestInit = {}
+): Promise<{ url: string; data: any } | null> {
+  // Create a copy and shuffle the URLs to randomize the initial order
+  const urlsToTry = shuffleArray([...baseUrls]);
+  const triedUrls = new Set<string>();
+  const maxAttemptsPerUrl = 5;
+
   // Add default headers if not provided
   const fetchOptions = {
     headers: {
@@ -124,48 +74,134 @@ async function fetchFromMultipleUrls(
     ...options,
   };
 
-  // Shuffle the base URLs for randomization
-  const shuffledUrls = shuffleArray(baseUrls);
+  let attemptCount = 0;
+  const maxTotalAttempts = 100; // Safety limit to prevent infinite loops
 
-  // Create an array of promises for each fetch request
-  const fetchPromises = shuffledUrls.map(async (baseUrl) => {
-    const url = `${baseUrl}${endpoint}`;
-    try {
-      console.log(`Attempting to fetch from ${baseUrl}`);
-      const { data, status } = await fetchWithRetry(
-        url,
-        fetchOptions,
-        maxRetries
+  while (urlsToTry.length > 0 && attemptCount < maxTotalAttempts) {
+    // Get the next URL to try
+    const baseUrl = urlsToTry.shift();
+    const fullUrl = `${baseUrl}${endpoint}`;
+    let attemptsForThisUrl = 0;
+
+    // Try this URL up to maxAttemptsPerUrl times
+    while (attemptsForThisUrl < maxAttemptsPerUrl) {
+      attemptCount++;
+      attemptsForThisUrl++;
+
+      try {
+        console.log(
+          `[Attempt ${attemptCount}] Trying ${baseUrl} (attempt ${attemptsForThisUrl}/${maxAttemptsPerUrl} for this URL)`
+        );
+
+        // Set a timeout for each request (5 seconds)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const response = await fetch(fullUrl, {
+          ...fetchOptions,
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          console.log(
+            `[Attempt ${attemptCount}] HTTP error ${response.status} from ${baseUrl}`
+          );
+
+          // For HTTP errors, switch to next URL immediately on first attempt
+          if (attemptsForThisUrl === 1) {
+            console.log(
+              `First attempt failed with HTTP error, switching to next URL`
+            );
+            break;
+          }
+
+          // Continue trying this URL unless we've reached the max attempts
+          if (attemptsForThisUrl >= maxAttemptsPerUrl) {
+            console.log(
+              `Max attempts (${maxAttemptsPerUrl}) reached for ${baseUrl}, switching to next URL`
+            );
+            break;
+          }
+
+          // Wait before retry
+          const delay =
+            300 * Math.pow(1.5, attemptsForThisUrl) * (0.5 + Math.random());
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+
+        const data = await response.json();
+
+        // Check if we have valid EPG data
+        if (Array.isArray(data) && data.length > 0) {
+          console.log(
+            `[SUCCESS] Found valid EPG data from ${baseUrl} (${data.length} programs)`
+          );
+          return { url: baseUrl, data };
+        } else {
+          console.log(
+            `[Attempt ${attemptCount}] Response from ${baseUrl} contained no EPG data`
+          );
+
+          // Empty data, switch to next URL immediately
+          break;
+        }
+      } catch (error) {
+        console.error(
+          `[Attempt ${attemptCount}] Error from ${baseUrl}:`,
+          error.message
+        );
+
+        // For network/timeout errors, switch to next URL immediately on first attempt
+        if (attemptsForThisUrl === 1) {
+          console.log(`First attempt failed with error, switching to next URL`);
+          break;
+        }
+
+        // If we've reached max attempts for this URL, move to the next one
+        if (attemptsForThisUrl >= maxAttemptsPerUrl) {
+          console.log(
+            `Max attempts (${maxAttemptsPerUrl}) reached for ${baseUrl}, switching to next URL`
+          );
+          break;
+        }
+
+        // Wait before retry
+        const delay =
+          300 * Math.pow(1.5, attemptsForThisUrl) * (0.5 + Math.random());
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+
+    // Mark this URL as tried
+    triedUrls.add(baseUrl);
+
+    // If we've exhausted all URLs but still have no data, add all URLs back to the queue
+    // This implements unlimited retries across all sources
+    if (urlsToTry.length === 0 && triedUrls.size === baseUrls.length) {
+      console.log(
+        `[RETRY ALL] Exhausted all URLs, starting over with all URLs`
       );
 
-      return { url: baseUrl, data, status };
-    } catch (error) {
-      console.error(`All retries failed for ${url}:`, error.message);
-      return {
-        url: baseUrl,
-        error: error.message,
-        status: error.name === "AbortError" ? "TIMEOUT" : "ERROR",
-      };
+      // Get all URLs that aren't currently in the queue
+      const urlsToReadd = baseUrls.filter((url) => !urlsToTry.includes(url));
+
+      // Shuffle them and add back to queue
+      const reshuffled = shuffleArray(urlsToReadd);
+      urlsToTry.push(...reshuffled);
+
+      // Clear the tried set for the next round
+      triedUrls.clear();
     }
-  });
-
-  // Wait for all promises to resolve, including failures
-  const results = await Promise.all(fetchPromises);
-
-  // Filter out successful responses
-  const successfulResponses = results.filter((result) => !result.error);
-
-  // Log error statistics
-  const failedResponses = results.filter((result) => result.error);
-  if (failedResponses.length > 0) {
-    console.log(`${failedResponses.length}/${baseUrls.length} requests failed`);
   }
 
-  return {
-    success: successfulResponses,
-    failed: failedResponses,
-    all: results,
-  };
+  // If we get here, we've exhausted all options
+  console.error(
+    `[FAILED] Could not fetch data after ${attemptCount} total attempts across all URLs`
+  );
+  return null;
 }
 
 export async function GET({ request, locals }) {
@@ -175,7 +211,6 @@ export async function GET({ request, locals }) {
     const tenantId = url.searchParams.get("tenantId") || "1";
 
     // Initialize Supabase client
-    // Environment variables should be set for both production and development
     const supabaseUrl = import.meta.env.PROD
       ? locals.runtime.env.SUPABASE_URL
       : import.meta.env.SUPABASE_URL;
@@ -208,56 +243,34 @@ export async function GET({ request, locals }) {
       "https://play.xg.ar",
     ];
 
-    // Fetch EPG data for each channel
+    // Fetch EPG data for each channel with unlimited retries
     const channelsWithEPG = await Promise.all(
       channels.map(async (channel: Channel) => {
         try {
-          console.log(`Fetching EPG for channel ${channel.id}`);
-
-          // Try to fetch EPG data from multiple sources
-          const epgEndpoint = `/sb/public/epg/channel/${channel.id}?tenantId=${tenantId}`;
-          const results = await fetchFromMultipleUrls(
-            baseUrls,
-            epgEndpoint,
-            {},
-            5
+          console.log(
+            `\n========== CHANNEL ${channel.id} (${
+              channel.displayName || channel.name || channel.number
+            }) ==========`
           );
 
-          // Use the first successful response, or return empty EPG if all failed
-          if (results.success.length > 0) {
-            // Find the first response with valid EPG data (non-empty array)
-            const validResponse = results.success.find(
-              (response) =>
-                Array.isArray(response.data) && response.data.length > 0
-            );
+          // Try to fetch EPG data using our exhaustive fetch method
+          const epgEndpoint = `/sb/public/epg/channel/${channel.id}?tenantId=${tenantId}`;
+          const result = await exhaustiveFetch(baseUrls, epgEndpoint);
 
-            if (validResponse) {
-              const epgData = validResponse.data;
-              console.log(
-                `Successfully fetched EPG for channel ${channel.id} from ${validResponse.url} (${epgData.length} programs)`
-              );
-
-              return {
-                ...channel,
-                imageUrl: channel.logoPublicUrl,
-                epg: epgData,
-                epgSource: validResponse.url,
-              };
-            }
-
-            // If no valid EPG data found in successful responses
+          if (result) {
             console.log(
-              `No valid EPG data found for channel ${channel.id} despite successful responses`
+              `✅ Successfully fetched EPG for channel ${channel.id} from ${result.url}`
             );
+
             return {
               ...channel,
               imageUrl: channel.logoPublicUrl,
-              epg: [],
-              epgSource: null,
+              epg: result.data,
+              epgSource: result.url,
             };
           } else {
             console.error(
-              `Failed to fetch EPG for channel ${channel.id} from all sources after retries`
+              `❌ Failed to fetch EPG for channel ${channel.id} after exhausting all options`
             );
             return {
               ...channel,
@@ -267,7 +280,10 @@ export async function GET({ request, locals }) {
             };
           }
         } catch (error) {
-          console.error(`Error fetching EPG for channel ${channel.id}:`, error);
+          console.error(
+            `❌ Unexpected error fetching EPG for channel ${channel.id}:`,
+            error
+          );
           return {
             ...channel,
             imageUrl: channel.logoPublicUrl,
@@ -294,9 +310,14 @@ export async function GET({ request, locals }) {
       }
     });
 
+    console.log("\n========== SUMMARY ==========");
     console.log("EPG source statistics:", sourceStats);
     console.log(
-      `Successfully fetched EPG for ${channelsWithValidEpg}/${channels.length} channels`
+      `Successfully fetched EPG for ${channelsWithValidEpg}/${
+        channels.length
+      } channels (${((channelsWithValidEpg / channels.length) * 100).toFixed(
+        1
+      )}%)`
     );
 
     // Return the data in the requested format
@@ -318,6 +339,10 @@ export async function GET({ request, locals }) {
             sourceStats,
             totalChannels: channels.length,
             channelsWithEpg: channelsWithValidEpg,
+            successRate: `${(
+              (channelsWithValidEpg / channels.length) *
+              100
+            ).toFixed(1)}%`,
           },
         }),
         {
