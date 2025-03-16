@@ -1,24 +1,31 @@
 ---
-export const prerender = false
+export const prerender = false;
 import Layout from "@/layouts/Layout.astro";
 
-const { env } = Astro.locals.runtime;
-
-const SITE_URL = env.SITE_URL;
+// Environment variable handling for both prod and dev
+let SITE_URL;
+if (import.meta.env.PROD) {
+  // Production environment
+  const { env } = Astro.locals.runtime;
+  SITE_URL = env.SITE_URL;
+} else {
+  // Development environment
+  SITE_URL = import.meta.env.SITE_URL;
+}
 
 const request = await fetch(`${SITE_URL}/api/canales`);
 const canales = await request.json();
 
-const {id} = Astro.params
+const {id} = Astro.params;
 
-// Asegurar que canales es un array
+// Ensure canales is an array
 const esArrayValido = Array.isArray(canales.data);
 const listaCanales = esArrayValido ? canales.data : [];
 const canal = esArrayValido
   ? listaCanales.find((canal) => canal.number === parseInt(id))
   : null;
 
-// Verificar si el canal tiene URLs de streaming
+// Verify if the channel has streaming URLs
 const tieneDashUrl = canal?.contentUrls?.dash;
 const tieneHlsUrl = canal?.contentUrls?.hlsFP;
 
@@ -29,7 +36,7 @@ const hlsUrl = tieneHlsUrl
   ? canal.contentUrls.hlsFP
   : null;
 
-// Encontrar el índice del canal actual para el autodesplazamiento
+// Find the index of the current channel for auto-scrolling
 const canalIndex = listaCanales.findIndex((c) => c.number === parseInt(id));
 ---
 

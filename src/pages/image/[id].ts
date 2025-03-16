@@ -12,11 +12,24 @@ const DEFAULT_FALLBACK_IMAGE =
 
 export async function GET({ request, locals }) {
   try {
-    const { env } = locals.runtime;
+    let supabaseUrl;
+    let supabaseKey;
 
-    // Initialize Supabase client using environment variables from runtime
-    const supabaseUrl = env.SUPABASE_URL;
-    const supabaseKey = env.SUPABASE_ANON_KEY;
+    // Check if we're in development or production
+    const isDevelopment = import.meta.env.DEV;
+
+    if (isDevelopment) {
+      // Development: use import.meta.env
+      supabaseUrl = import.meta.env.SUPABASE_URL;
+      supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
+      console.log("Running in development mode");
+    } else {
+      // Production: use locals.runtime.env
+      const { env } = locals.runtime;
+      supabaseUrl = env.SUPABASE_URL;
+      supabaseKey = env.SUPABASE_ANON_KEY;
+      console.log("Running in production mode");
+    }
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Extract the image ID from the URL
