@@ -18,22 +18,34 @@ interface Channel {
 
 // Define the EPG item type
 interface EPGItem {
-  id: number;
+  id: string | number;
   title: string;
+  titleBrief?: string;
   startTime: string;
   endTime: string;
   description: string;
   pgRating: { name: string };
-  imageUrl: string;
-  state: string;
-  // Add other fields as needed
+  cuTvUrl?: string | null;
+  catchup?: boolean;
+  channelId?: number;
+  titles?: { [key: string]: string };
+  titleBriefs?: { [key: string]: string };
+  descriptions?: { [key: string]: string };
+  encrypted?: boolean;
+  imageUrl?: string;
+  imageUrls?: { [key: string]: string };
+  vodAssetId?: number;
+  hasNotification?: boolean;
+  state?: string;
 }
 
 // Define the channels_epg type
 interface ChannelEPG {
+  id: number;
   channel_id: number;
   epg_data: EPGItem[];
   epg_source: string | null;
+  created_at: string;
   updated_at: string;
 }
 
@@ -43,7 +55,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
     const format = url.searchParams.get("format")?.toLowerCase() || "json";
 
     // Initialize Supabase client
-    // Environment variables should be set for both production and development
     const supabaseUrl = import.meta.env.PROD
       ? locals.runtime.env.SUPABASE_URL
       : import.meta.env.SUPABASE_URL;
@@ -85,14 +96,70 @@ export const GET: APIRoute = async ({ request, locals }) => {
       });
     });
 
+    // Function to create placeholder EPG data for channels without EPG
+    const createPlaceholderEpg = (
+      channelId: number,
+      channelName: string,
+      logoUrl?: string | null
+    ): EPGItem => {
+      return {
+        id: `${channelId}`,
+        title: `Sin datos para ${channelName}`,
+        titleBrief: "Sin Datos",
+        startTime: "1970-01-01T23:00:00Z",
+        endTime: "9999-01-01T01:00:00Z",
+        description: "Este canal no tiene informacion de la guia.",
+        pgRating: {
+          name: "TV-PG",
+        },
+        cuTvUrl: null,
+        catchup: true,
+        channelId: channelId,
+        titles: {
+          ES: `Sin datos para ${channelName}`,
+        },
+        titleBriefs: {
+          ES: "Sin datos",
+        },
+        descriptions: {
+          ES: "Este canal no tiene informacion de la guia.",
+        },
+        encrypted: true,
+        imageUrl: logoUrl || `/sb/image/${channelId}`,
+        imageUrls: {},
+        vodAssetId: channelId,
+        hasNotification: false,
+        state: "CATCHUP",
+      };
+    };
+
     // Combine channel data with EPG data
     const channelsWithEPG = channels.map((channel) => {
       const epgInfo = epgMap.get(channel.id);
+      const displayName =
+        channel.displayName ||
+        channel.title ||
+        channel.name ||
+        `Channel ${channel.number}`;
+
+      // Use existing EPG data or create placeholder if none exists
+      const epgItems =
+        epgInfo?.data && epgInfo.data.length > 0
+          ? epgInfo.data
+          : [
+              createPlaceholderEpg(
+                channel.id,
+                displayName,
+                channel.logoPublicUrl
+              ),
+            ];
+
+      // Format according to the requested JSON structure
       return {
-        ...channel,
-        imageUrl: channel.logoPublicUrl,
-        epg: epgInfo?.data || [],
-        epgSource: epgInfo?.source || null,
+        id: channel.id,
+        number: channel.number,
+        displayName: displayName,
+        epg: epgItems,
       };
     });
 
@@ -101,9 +168,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
     let channelsWithValidEpg = 0;
 
     channelsWithEPG.forEach((channel) => {
-      if (channel.epgSource && channel.epg && channel.epg.length > 0) {
-        sourceStats[channel.epgSource] =
-          (sourceStats[channel.epgSource] || 0) + 1;
+      if (
+        channel.epg &&
+        channel.epg.length > 0 &&
+        channel.epg[0].title &&
+        !channel.epg[0].title.startsWith("Sin datos para")
+      ) {
+        const source = channel.epg[0].source || "unknown";
+        sourceStats[source] = (sourceStats[source] || 0) + 1;
         channelsWithValidEpg++;
       }
     });
@@ -119,16 +191,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
         },
       });
     } else {
-      // Return as JSON (default)
+      // Return as JSON (default) in the exact format requested
       return new Response(
         JSON.stringify({
           channels: channelsWithEPG,
-          meta: {
-            sourceStats,
-            totalChannels: channels.length,
-            channelsWithEpg: channelsWithValidEpg,
-            lastUpdated: new Date().toISOString(),
-          },
         }),
         {
           status: 200,
@@ -197,12 +263,9 @@ function convertToXMLTV(channelsWithEPG) {
     xmltv += `  <channel id="${channel.id}">\n`;
 
     // Use displayName if available, otherwise fall back to title or name
-    const displayName =
-      channel.displayName ||
-      channel.title ||
-      channel.name ||
-      `Channel ${channel.number}`;
-    xmltv += `    <display-name>${escapeXML(displayName)}</display-name>\n`;
+    xmltv += `    <display-name>${escapeXML(
+      channel.displayName
+    )}</display-name>\n`;
 
     // Add channel number as a secondary display-name
     if (channel.number) {
@@ -251,10 +314,7 @@ function convertToXMLTV(channelsWithEPG) {
 
           // Add image if available
           if (programme.imageUrl) {
-            // Use the source URL that successfully provided the EPG data
-            const baseUrl =
-              channel.epgSource || "https://stv.supportinternet.com.ar";
-            xmltv += `    <icon src="${baseUrl}${programme.imageUrl}" />\n`;
+            xmltv += `    <icon src="${escapeXML(programme.imageUrl)}" />\n`;
           }
 
           xmltv += `  </programme>\n`;

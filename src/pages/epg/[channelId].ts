@@ -15,7 +15,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
   try {
     // Extract the channel ID from the URL path
     const { channelId } = params;
-
+    console.log(channelId)
     if (!channelId) {
       return new Response(JSON.stringify({ error: "Channel ID is required" }), {
         status: 400,
@@ -82,7 +82,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
 
     // Process the EPG data - filter out CATCHUP items
     const filteredData = epg_data
-      .filter((item) => item.state !== "CATCHUP")
+      .filter((item) => item.state)
       .map((item) => {
         // Process each item here if needed
         return item; // You can transform the item if required

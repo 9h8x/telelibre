@@ -1,5 +1,22 @@
 ---
-import '@/styles/global.css'
+import "@/styles/global.css";
+
+// Define the interface for the component props
+interface Props {
+  channel?: string;
+}
+
+// Get the channel prop with a default of undefined
+const { channel } = Astro.props;
+
+// Create dynamic meta title and description based on channel
+const metaTitle = channel
+  ? `Mira ${channel} en vivo, gratis y sin anuncios - TeleLibre`
+  : "TeleLibre: Ver Fútbol Gratis en Vivo en Argentina - ESPN, TyC y Más";
+
+const metaDescription = channel
+  ? `Mira ${channel} en vivo, gratis y sin anuncios en TeleLibre. Sin registros ni suscripciones.`
+  : "Disfruta de televisión gratis en Argentina con TeleLibre. Transmisiones de deportes, películas, series, noticias y más, incluyendo ESPN y otros.";
 ---
 
 <!doctype html>
@@ -7,16 +24,15 @@ import '@/styles/global.css'
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="TeleLibre" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
-    <meta
-      name="title"
-      content="TeleLibre: Ver Fútbol Gratis en Vivo en Argentina - ESPN, TyC y Más"
-    />
-    <meta
-      name="description"
-      content="Disfruta de televisión gratis en Argentina con TeleLibre. Transmisiones de deportes, películas, series, noticias y más, incluyendo ESPN y otros."
-    />
+    <meta name="title" content={metaTitle} />
+    <meta name="description" content={metaDescription} />
     <meta
       name="keywords"
       content="televisión gratis Argentina, ver televisión gratis online Argentina, canales gratuitos Argentina, deportes gratis en vivo Argentina, entretenimiento gratis Argentina, películas y series gratis Argentina, TyC Sports ESPN DSPORTS gratis, televisión en vivo sin suscripción Argentina, ver deportes gratis Argentina, canales de noticias gratis Argentina, ver fútbol gratis Argentina, ver programas en vivo gratis, transmisión en vivo sin cable Argentina, canales de televisión en vivo gratis, ver TV gratis sin costo, ver programas y deportes gratis, transmisión de deportes y entretenimiento gratis, televisión gratis sin suscripción, ver televisión en vivo sin pagar, ver películas gratis en Argentina, televisión online gratis Argentina, series y películas gratis en vivo, canales de entretenimiento gratis en Argentina, canales de música gratis Argentina, ver contenido cultural gratis Argentina, canales infantiles gratis Argentina, ver documentales gratis en Argentina, televisión nacional gratis Argentina, canales de cocina y estilo de vida gratis, televisión sin contrato Argentina, ver series y deportes gratis online, ver canales de TV gratuitos en Argentina, ver contenido en vivo gratis, televisión por internet gratis Argentina, canales de noticias en vivo gratis"
@@ -26,18 +42,12 @@ import '@/styles/global.css'
     <meta name="language" content="Spanish" />
     <meta name="revisit-after" content="3 days" />
     <meta name="author" content="TeleLibre Admin" />
-    <meta
-      content="TeleLibre: Ver Fútbol Gratis en Vivo en Argentina - ESPN, TyC y Más"
-      property="og:title"
-    />
-    <meta
-      content="Disfruta de televisión gratis en Argentina con TeleLibre. Transmisiones de deportes, películas, series, noticias y más, incluyendo ESPN y otros."
-      property="og:description"
-    />
+    <meta content={metaTitle} property="og:title" />
+    <meta content={metaDescription} property="og:description" />
     <meta content="https://telelibre.site" property="og:url" />
     <meta content="https://telelibre.site/favicon.svg" property="og:image" />
     <meta content="#43B581" data-react-helmet="true" name="theme-color" />
-    <title>TeleLibre</title>
+    <title>{channel ? `${channel} en vivo - TeleLibre` : "TeleLibre"}</title>
   </head>
 
   <body>
