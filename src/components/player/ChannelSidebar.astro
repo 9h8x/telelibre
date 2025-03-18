@@ -6,6 +6,17 @@ interface Props {
 }
 
 const { canales, currentChannelId, canalIndex } = Astro.props;
+
+// Define the name filter function for reuse
+const filterChannelName = (name) => {
+  return name
+    ? name
+        .replace(/\bHD\b/gi, "")
+        .replace(!name.toUpperCase().startsWith("TV") ? /\bTV\b/gi : "", "")
+        .replace(/\s+/g, " ")
+        .trim()
+    : "";
+};
 ---
 
 <div class="w-full md:w-72 h-full" id="sidebar-container">
@@ -56,46 +67,54 @@ const { canales, currentChannelId, canalIndex } = Astro.props;
     >
       <ul class="space-y-1" role="list">
         {
-          canales.map((canal, index) => (
-            <li
-              id={`canal-${canal.number}`}
-              class={`channel-item ${index === canalIndex ? "scroll-target" : ""}`}
-              data-channel-name={
-                canal.titles?.ES?.toLowerCase() ||
-                canal.titles?.EN?.toLowerCase() ||
-                ""
-              }
-            >
-              <a
-                href={`/ver/${canal.number}`}
-                class={`flex items-center p-2 rounded-md transition-colors ${
-                  canal.number === currentChannelId
-                    ? "bg-primary/10 text-primary font-medium"
-                    : "hover:bg-muted text-foreground"
-                }`}
-                aria-current={
-                  canal.number === currentChannelId ? "page" : undefined
+          canales.map((canal, index) => {
+            // Get filtered ES and EN titles
+            const filteredESTitle = filterChannelName(canal.titles?.ES);
+            const filteredENTitle = filterChannelName(canal.titles?.EN);
+            // Use the first available filtered title
+            const displayTitle = filteredESTitle || filteredENTitle;
+
+            return (
+              <li
+                id={`canal-${canal.number}`}
+                class={`channel-item ${index === canalIndex ? "scroll-target" : ""}`}
+                data-channel-name={
+                  canal.titles?.ES?.toLowerCase() ||
+                  canal.titles?.EN?.toLowerCase() ||
+                  ""
                 }
               >
-                <div class="w-10 h-10 mr-3 flex-shrink-0 bg-muted rounded-md overflow-hidden flex items-center justify-center">
-                  <img
-                    class="w-full h-full object-contain p-1"
-                    src={`${canal.logoUrl}`}
-                    alt=""
-                    loading="lazy"
-                    onerror="this.onerror=null; this.src='/placeholder-channel.svg';"
-                    aria-hidden="true"
-                  />
-                </div>
-                <div class="flex-1 truncate">
-                  <span class="font-medium">{canal.number}</span>
-                  <span class="ml-1 text-sm text-muted-foreground">
-                    {canal.titles?.ES || canal.titles?.EN}
-                  </span>
-                </div>
-              </a>
-            </li>
-          ))
+                <a
+                  href={`/ver/${canal.number}`}
+                  class={`flex items-center p-2 rounded-md transition-colors ${
+                    canal.number === currentChannelId
+                      ? "bg-primary/10 mr-2 text-primary font-medium"
+                      : "hover:bg-muted text-foreground mr-2"
+                  }`}
+                  aria-current={
+                    canal.number === currentChannelId ? "page" : undefined
+                  }
+                >
+                  <div class="w-10 h-10 mr-3 flex-shrink-0 bg-muted  rounded-md overflow-hidden flex items-center justify-center">
+                    <img
+                      class="w-full h-full object-contain p-1"
+                      src={`${canal.logoUrl}`}
+                      alt=""
+                      loading="lazy"
+                      onerror="this.onerror=null; this.src='/placeholder-channel.svg';"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div class="flex-1 truncate">
+                    <span class="font-medium">{canal.number}</span>
+                    <span class="ml-1 text-sm text-muted-foreground">
+                      {displayTitle}
+                    </span>
+                  </div>
+                </a>
+              </li>
+            );
+          })
         }
       </ul>
     </div>
