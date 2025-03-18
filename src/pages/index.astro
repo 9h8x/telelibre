@@ -2,6 +2,10 @@
 export const prerender = false;
 import { buttonVariants } from "@/components/ui/button";
 import Layout from "../layouts/Layout.astro";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+
+// Environment variable handling for both prod and dev
 let SITE_URL;
 if (import.meta.env.PROD) {
   // Production environment
@@ -11,27 +15,23 @@ if (import.meta.env.PROD) {
   // Development environment
   SITE_URL = import.meta.env.SITE_URL;
 }
+
+// Fetch channels data
 const request = await fetch(`${SITE_URL}/api/canales`);
 const canales = await request.json();
 ---
 
 <Layout>
-  <div class="container mx-auto py-8 px-8">
+  <div class="container mx-auto py-8 px-4 md:px-8">
     <div class="flex flex-col gap-3 mb-6">
       <div class="flex flex-wrap justify-between items-center gap-4">
-        <h1 class="text-3xl font-bold">Lista de canales</h1>
+        <h1 class="text-3xl font-bold text-foreground">Lista de canales</h1>
         <div class="flex items-center gap-4">
-          <span
-            class="bg-slate-800 text-white px-3 py-1 rounded-full text-sm font-medium"
-          >
+          <Badge variant="secondary">
             {canales.data.length} canales disponibles
-          </span>
+          </Badge>
           <a href="/informacion">
-            <span
-              class="bg-slate-800 text-white px-3 py-1 rounded-full text-sm font-medium"
-            >
-              Información
-            </span>
+            <Badge variant="secondary"> Información </Badge>
           </a>
         </div>
       </div>
@@ -39,14 +39,16 @@ const canales = await request.json();
         <button
           id="copyIptvButton"
           type="button"
-          class="hover:cursor-pointer bg-slate-800 text-white px-3 py-1 rounded-full text-base font-medium hover:bg-slate-700 transition-colors"
+          class={buttonVariants({ variant: "outline", size: "sm" })}
+          aria-label="Copiar enlace de lista IPTV"
         >
           Lista IPTV
         </button>
         <button
           id="copyXmltvButton"
           type="button"
-          class="hover:cursor-pointer bg-slate-800 text-white px-3 py-1 rounded-full text-base font-medium hover:bg-slate-700 transition-colors"
+          class={buttonVariants({ variant: "outline", size: "sm" })}
+          aria-label="Copiar enlace de guía XMLTV"
         >
           Guia XMLTV
         </button>
@@ -56,18 +58,20 @@ const canales = await request.json();
     <!-- Search bar -->
     <div class="w-full max-w-md">
       <div class="relative">
-        <input
+        <Input
           type="text"
           id="channelSearch"
           placeholder="Buscar por nombre de canal..."
-          class="w-full px-4 py-2 rounded-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-500"
+          class="w-full pr-10"
+          aria-label="Buscar canal por nombre"
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-300"
+          class="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          aria-hidden="true"
         >
           <path
             stroke-linecap="round"
@@ -78,52 +82,66 @@ const canales = await request.json();
       </div>
     </div>
 
-    <!-- Lista IPTV button with fixed text size -->
-
     <!-- Responsive grid layout -->
     <div
       id="channelsGrid"
-      class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 mt-6"
     >
       {
         canales.data.map((channel: any) => (
           <div
-            class="channel-card bg-white dark:bg-slate-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden"
+            class="channel-card bg-card text-card-foreground rounded-lg border-y-[1px] border-x-[1px] shadow-sm hover:shadow transition-shadow duration-200 overflow-hidden"
             data-channel-name={
-              channel.titles.ES?.toLowerCase() ||
-              channel.titles.EN?.toLowerCase() ||
+              channel.titles?.ES?.toLowerCase() ||
+              channel.titles?.EN?.toLowerCase() ||
               ""
             }
           >
-            <div class="flex items-center p-4 w-full">
+            <div class="flex p-4 w-full">
               <div class="flex-shrink-0 mr-4">
-                <div class="w-16 h-16 rounded-md overflow-hidden bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                <div class="w-16 h-16 rounded-md overflow-hidden bg-muted flex items-center justify-center">
                   <img
                     class="w-full h-full object-contain"
                     src={`${channel.logoUrl}`}
                     alt={
-                      channel.titles.ES || channel.titles.EN || "Logo del canal"
+                      channel.titles?.ES ||
+                      channel.titles?.EN ||
+                      "Logo del canal"
                     }
                     loading="lazy"
+                    onerror="this.onerror=null; this.src='/placeholder-channel.svg';"
                   />
                 </div>
               </div>
 
-              <div class="flex-grow">
-                <div class="flex items-center">
-                  <h2 class="text-lg font-medium text-slate-900 dark:text-white">
-                    {channel.titles.ES || channel.titles.EN}
+              <div class="flex-grow flex flex-col">
+                <div class="flex items-center mb-2">
+                  <Badge className="mr-2">{channel.number}</Badge>
+                  <h2 class="text-lg font-medium text-card-foreground">
+                    {((name) =>
+                      name
+                        ? name
+                            .replace(/\bHD\b/gi, "")
+                            .replace(
+                              !name.toUpperCase().startsWith("TV")
+                                ? /\bTV\b/gi
+                                : "",
+                              ""
+                            )
+                            .replace(/\s+/g, " ")
+                            .trim()
+                        : "")(channel.titles?.ES || channel.titles?.EN)}
                   </h2>
                 </div>
-              </div>
 
-              <div class="flex-shrink-0 ml-4">
-                <a
-                  href={`/ver/${channel.number}`}
-                  class={`${buttonVariants({ variant: "default" })} text-sm`}
-                >
-                  Ver Ahora
-                </a>
+                <div class="mt-auto">
+                  <a
+                    href={`/ver/${channel.number}`}
+                    class={buttonVariants({ variant: "default", size: "sm" })}
+                  >
+                    Ver Ahora
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -132,10 +150,7 @@ const canales = await request.json();
     </div>
 
     <!-- No results message -->
-    <div
-      id="noResults"
-      class="hidden text-center py-8 text-slate-600 dark:text-slate-400"
-    >
+    <div id="noResults" class="hidden text-center py-8 text-muted-foreground">
       No se encontraron canales que coincidan con tu búsqueda.
     </div>
   </div>

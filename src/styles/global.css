@@ -116,11 +116,3 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
-
-.video-js .vjs-time-control {
-  display: none;
-}
-
-.video-js .vjs-progress-control {
-  display: none;
-}

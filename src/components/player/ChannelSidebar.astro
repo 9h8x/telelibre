@@ -1,0 +1,222 @@
+---
+interface Props {
+  canales: any[];
+  currentChannelId: number;
+  canalIndex: number;
+}
+
+const { canales, currentChannelId, canalIndex } = Astro.props;
+---
+
+<div class="w-full md:w-72 h-full" id="sidebar-container">
+  <div
+    class="bg-card rounded-lg shadow-sm border border-border p-4 md:sticky md:top-4"
+    id="sidebar-content"
+  >
+    <h2 class="text-lg font-semibold mb-3 flex items-center text-foreground">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5 mr-2 text-primary"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm11 1H6v8l4-2 4 2V6z"
+          clip-rule="evenodd"></path>
+      </svg>
+      Todos los Canales
+    </h2>
+    <div class="relative">
+      <input
+        type="text"
+        id="channel-search"
+        placeholder="Buscar canal..."
+        class="w-full p-2 pl-8 mb-3 border rounded-md text-sm border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-input"
+        aria-label="Buscar canal por nombre o número"
+      />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-4 w-4 absolute left-2.5 top-3 text-muted-foreground"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </div>
+    <div
+      class="channel-list-container overflow-y-auto pr-1 max-h-[calc(12*2.75rem)]"
+      id="sidebar-channels"
+    >
+      <ul class="space-y-1" role="list">
+        {
+          canales.map((canal, index) => (
+            <li
+              id={`canal-${canal.number}`}
+              class={`channel-item ${index === canalIndex ? "scroll-target" : ""}`}
+              data-channel-name={
+                canal.titles?.ES?.toLowerCase() ||
+                canal.titles?.EN?.toLowerCase() ||
+                ""
+              }
+            >
+              <a
+                href={`/ver/${canal.number}`}
+                class={`flex items-center p-2 rounded-md transition-colors ${
+                  canal.number === currentChannelId
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "hover:bg-muted text-foreground"
+                }`}
+                aria-current={
+                  canal.number === currentChannelId ? "page" : undefined
+                }
+              >
+                <div class="w-10 h-10 mr-3 flex-shrink-0 bg-muted rounded-md overflow-hidden flex items-center justify-center">
+                  <img
+                    class="w-full h-full object-contain p-1"
+                    src={`${canal.logoUrl}`}
+                    alt=""
+                    loading="lazy"
+                    onerror="this.onerror=null; this.src='/placeholder-channel.svg';"
+                    aria-hidden="true"
+                  />
+                </div>
+                <div class="flex-1 truncate">
+                  <span class="font-medium">{canal.number}</span>
+                  <span class="ml-1 text-sm text-muted-foreground">
+                    {canal.titles?.ES || canal.titles?.EN}
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Channel search functionality
+  const channelSearch = document.getElementById("channel-search");
+  const sidebarChannels = document.getElementById("sidebar-channels");
+  const mainContent = document.getElementById("main-content");
+  const sidebarContent = document.getElementById("sidebar-content");
+
+  // Adjust sidebar height to match main content
+  function adjustSidebarHeight() {
+    if (sidebarChannels && mainContent && sidebarContent) {
+      const mainContentHeight = mainContent.offsetHeight;
+
+      // Set the height of the channel list container to match the main content
+      // Subtract the header height to account for the search and title
+      const headerHeight =
+        sidebarContent.offsetHeight - sidebarChannels.offsetHeight;
+      sidebarChannels.style.height = `${Math.max(mainContentHeight - headerHeight, 300)}px`;
+    }
+  }
+
+  // Call this function on load and on window resize
+  adjustSidebarHeight();
+  window.addEventListener("resize", adjustSidebarHeight);
+
+  // Observe changes to the main content to adjust sidebar height
+  const resizeObserver = new ResizeObserver(() => {
+    adjustSidebarHeight();
+  });
+
+  if (mainContent) {
+    resizeObserver.observe(mainContent);
+  }
+
+  // Channel search functionality
+  if (channelSearch) {
+    channelSearch.addEventListener("input", function (e) {
+      const searchTerm = e.target.value.toLowerCase().trim();
+      const channelItems = document.querySelectorAll(".channel-item");
+
+      channelItems.forEach((item) => {
+        const channelName = item.dataset.channelName;
+        const channelNumber = item.id.replace("canal-", "");
+
+        if (
+          channelName.includes(searchTerm) ||
+          channelNumber.includes(searchTerm)
+        ) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    });
+  }
+
+  // Scroll to current channel in sidebar
+  const scrollToCurrentChannel = () => {
+    const target = document.querySelector(".scroll-target");
+
+    if (sidebarChannels && target) {
+      const containerHeight = sidebarChannels.clientHeight;
+      const targetTop = target.offsetTop;
+      const targetHeight = target.clientHeight;
+
+      // Scroll with a small delay to ensure DOM is fully rendered
+      setTimeout(() => {
+        sidebarChannels.scrollTop =
+          targetTop - containerHeight / 2 + targetHeight / 2;
+      }, 100);
+    }
+  };
+
+  // Call scroll function with a slight delay to ensure DOM is ready
+  setTimeout(() => {
+    scrollToCurrentChannel();
+    adjustSidebarHeight();
+  }, 100);
+</script>
+
+<style>
+  /* Custom scrollbar for channel list */
+  .channel-list-container {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted) / 0.5) transparent;
+    /* Fixed height to show approximately 12 items */
+    max-height: calc(17 * 2.75rem);
+    overflow-y: auto;
+  }
+
+  .channel-list-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .channel-list-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .channel-list-container::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted) / 0.5);
+    border-radius: 20px;
+  }
+
+  /* Highlight current channel */
+  .scroll-target a {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scroll-target a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: hsl(var(--primary));
+  }
+</style>

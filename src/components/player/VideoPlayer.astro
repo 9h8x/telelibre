@@ -1,0 +1,804 @@
+---
+interface Props {
+  dashUrl: string | null;
+  hlsUrl: string | null;
+  channelName: string;
+}
+
+const { dashUrl, hlsUrl, channelName } = Astro.props;
+---
+
+<div class="w-full">
+  <div class="bg-muted rounded-lg overflow-hidden shadow-lg relative border-[1px]">
+    <div id="video-container" class="w-full aspect-video relative">
+      <video id="video" class="w-full h-full" controls></video>
+      <!-- Play button overlay -->
+      <div
+        id="play-overlay"
+        class="absolute inset-0 flex items-center justify-center bg-background/100 cursor-pointer z-10"
+      >
+        <button
+          id="play-button"
+          class="bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          aria-label={`Reproducir ${channelName}`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>Reproducir</span>
+        </button>
+      </div>
+      <!-- Loading spinner -->
+      <div
+        id="loading-overlay"
+        class="absolute inset-0 flex items-center justify-center bg-background/80 z-20 hidden"
+      >
+        <div class="h-10 w-10 animate-spin" role="status">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-primary h-full w-full"
+          >
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+          </svg>
+          <span class="sr-only">Cargando...</span>
+        </div>
+      </div>
+      <!-- Error message overlay -->
+      <div
+        id="error-overlay"
+        class="absolute inset-0 flex items-center justify-center bg-background/90 z-20 hidden"
+      >
+        <div class="text-center p-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-10 w-10 mx-auto text-destructive mb-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <p class="text-foreground text-lg font-medium">Canal no disponible</p>
+          <p class="text-muted-foreground mt-1" id="error-message">
+            No se pudo cargar el contenido
+          </p>
+          <button
+            id="retry-button"
+            class="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          >
+            Intentar de nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quality control -->
+  <div class="mt-4 bg-card rounded-lg shadow-sm border border-border p-4">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+      <div class="flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 mr-2 text-primary"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+            clip-rule="evenodd"></path>
+        </svg>
+        <label
+          for="quality-selector"
+          class="text-foreground font-medium text-sm">Calidad de Video:</label
+        >
+      </div>
+      <select
+        id="quality-selector"
+        class="w-full sm:w-auto flex-1 h-9 bg-background border border-input rounded-md text-sm focus:ring-2 focus:ring-ring focus:border-input py-2 px-3"
+        aria-label="Seleccionar calidad de video"
+      >
+        <option value="auto">Auto (Recomendado)</option>
+        <!-- Las opciones se rellenarán con JavaScript -->
+      </select>
+      <span
+        id="current-resolution"
+        class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full ml-auto"
+      ></span>
+    </div>
+
+    <div class="mt-3 pt-3 border-t border-border" id="disclaimer-section">
+      <div class="flex items-center text-sm text-muted-foreground">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4 mr-1 text-warning"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z"
+            clip-rule="evenodd"></path>
+        </svg>
+        <span
+          >No anda fuera de Argentina. Si estás en Argentina y no funciona,
+          probablemente estés bloqueado por los links.</span
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<script
+  is:inline
+  src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.js"
+></script>
+<script define:vars={{ dashUrl, hlsUrl }}>
+  document.addEventListener("DOMContentLoaded", async function () {
+    // Initialize player elements
+    const video = document.getElementById("video");
+    const player = new shaka.Player(video);
+    const qualitySelector = document.getElementById("quality-selector");
+    const currentResolutionEl = document.getElementById("current-resolution");
+    const videoContainer = document.getElementById("video-container");
+    const playOverlay = document.getElementById("play-overlay");
+    const playButton = document.getElementById("play-button");
+    const loadingOverlay = document.getElementById("loading-overlay");
+    const errorOverlay = document.getElementById("error-overlay");
+    const errorMessage = document.getElementById("error-message");
+    const retryButton = document.getElementById("retry-button");
+
+    let playerLoaded = false;
+    let loadAttempts = 0;
+    const MAX_LOAD_ATTEMPTS = 3;
+
+    // Configure Shaka Player with optimized settings
+    player.configure({
+      streaming: {
+        bufferingGoal: 60,
+        rebufferingGoal: 2,
+        bufferBehind: 30,
+        autoplay: false,
+        retryParameters: {
+          maxAttempts: 5,
+          baseDelay: 1000,
+          backoffFactor: 2,
+          fuzzFactor: 0.5,
+        },
+      },
+      abr: {
+        enabled: true,
+        defaultBandwidthEstimate: 1000000, // 1Mbps initial estimate
+      },
+    });
+
+    // Error event listener
+    player.addEventListener("error", (event) => {
+      console.error("Error de Shaka Player:", event.detail);
+      showErrorOverlay(
+        "Error al reproducir el contenido. Código: " + event.detail.code
+      );
+    });
+
+    // Handle play button click
+    playButton.addEventListener("click", () => {
+      if (playerLoaded) {
+        playOverlay.style.display = "none";
+        video.play().catch((err) => {
+          console.error("Error al reproducir:", err);
+          showErrorOverlay("No se pudo iniciar la reproducción");
+        });
+      } else {
+        showLoadingOverlay();
+        tryLoadStream()
+          .then(() => {
+            hideLoadingOverlay();
+            playOverlay.style.display = "none";
+            video.play().catch((err) => {
+              console.error("Error al reproducir después de cargar:", err);
+              showErrorOverlay("No se pudo iniciar la reproducción");
+            });
+          })
+          .catch((err) => {
+            hideLoadingOverlay();
+            showErrorOverlay(err.message || "Error al cargar el stream");
+          });
+      }
+    });
+
+    // Retry button click handler
+    retryButton.addEventListener("click", () => {
+      hideErrorOverlay();
+      showLoadingOverlay();
+      loadAttempts = 0;
+      tryLoadStream()
+        .then(() => {
+          hideLoadingOverlay();
+          playOverlay.style.display = "none";
+          video.play().catch((err) => {
+            console.error("Error al reproducir después de reintentar:", err);
+            showErrorOverlay("No se pudo iniciar la reproducción");
+          });
+        })
+        .catch((err) => {
+          hideLoadingOverlay();
+          showErrorOverlay(err.message || "Error al cargar el stream");
+        });
+    });
+
+    // Video event listeners
+    video.addEventListener("ended", () => {
+      playOverlay.style.display = "flex";
+    });
+
+    video.addEventListener("pause", () => {
+      // Only show play overlay if video is not loading
+      if (!video.seeking && !video.waiting) {
+        playOverlay.style.display = "flex";
+      }
+    });
+
+    video.addEventListener("playing", () => {
+      playOverlay.style.display = "none";
+      hideErrorOverlay();
+      hideLoadingOverlay();
+    });
+
+    video.addEventListener("waiting", () => {
+      if (!playerLoaded) return;
+      showLoadingOverlay();
+    });
+
+    video.addEventListener("canplay", () => {
+      hideLoadingOverlay();
+    });
+
+    // Helper functions for overlays
+    function showLoadingOverlay() {
+      loadingOverlay.style.display = "flex";
+      errorOverlay.style.display = "none";
+    }
+
+    function hideLoadingOverlay() {
+      loadingOverlay.style.display = "none";
+    }
+
+    function showErrorOverlay(message) {
+      errorMessage.textContent = message || "Error desconocido";
+      errorOverlay.style.display = "flex";
+      loadingOverlay.style.display = "none";
+    }
+
+    function hideErrorOverlay() {
+      errorOverlay.style.display = "none";
+    }
+
+    // Setup quality options in selector
+    const setupQualityOptions = () => {
+      const tracks = player.getVariantTracks();
+      const tracksByHeight = {};
+
+      tracks.forEach((track) => {
+        const height = track.height || 0;
+        if (!tracksByHeight[height]) {
+          tracksByHeight[height] = [];
+        }
+        tracksByHeight[height].push(track);
+      });
+
+      // Clear existing options
+      while (qualitySelector.firstChild) {
+        qualitySelector.removeChild(qualitySelector.firstChild);
+      }
+
+      // Add auto option
+      const autoOption = document.createElement("option");
+      autoOption.value = "auto";
+      autoOption.textContent = "Auto (Recomendado)";
+      qualitySelector.appendChild(autoOption);
+
+      // Add quality options sorted by height (highest first)
+      Object.keys(tracksByHeight)
+        .map((height) => parseInt(height))
+        .sort((a, b) => b - a)
+        .forEach((height) => {
+          if (height > 0) {
+            const option = document.createElement("option");
+            const track = tracksByHeight[height][0];
+            option.value = height;
+            option.textContent = `${height}p ${track.bandwidth ? `(${Math.round(track.bandwidth / 1000)} kbps)` : ""}`;
+            qualitySelector.appendChild(option);
+          }
+        });
+
+      // If no quality options were found, show a message
+      if (Object.keys(tracksByHeight).length === 0) {
+        const noOption = document.createElement("option");
+        noOption.value = "none";
+        noOption.textContent = "No hay opciones de calidad disponibles";
+        qualitySelector.appendChild(noOption);
+        qualitySelector.disabled = true;
+      }
+    };
+
+    // Update the current resolution display
+    const updateCurrentResolution = () => {
+      const activeTrack = player.getVariantTracks().find((t) => t.active);
+      if (activeTrack && activeTrack.height) {
+        currentResolutionEl.textContent = `Reproduciendo: ${activeTrack.height}p`;
+        currentResolutionEl.style.display = "inline-block";
+      } else {
+        currentResolutionEl.textContent = "";
+        currentResolutionEl.style.display = "none";
+      }
+    };
+
+    // Handle quality selection change
+    const handleQualityChange = (event) => {
+      const selectedValue = event.target.value;
+      if (selectedValue === "auto") {
+        player.configure("abr.enabled", true);
+      } else if (selectedValue !== "none") {
+        player.configure("abr.enabled", false);
+        const height = parseInt(selectedValue);
+        const tracksWithHeight = player
+          .getVariantTracks()
+          .filter((t) => t.height === height);
+        if (tracksWithHeight.length > 0) {
+          // Select the track with the highest bandwidth for the selected height
+          const bestTrack = tracksWithHeight.reduce((prev, current) =>
+            prev.bandwidth > current.bandwidth ? prev : current
+          );
+          player.selectVariantTrack(bestTrack, true);
+        }
+      }
+    };
+
+    // Try to load the stream with fallback
+    async function tryLoadStream() {
+      if (loadAttempts >= MAX_LOAD_ATTEMPTS) {
+        throw new Error("Se excedió el número máximo de intentos");
+      }
+
+      loadAttempts++;
+
+      try {
+        // First try DASH if available
+        if (dashUrl) {
+          try {
+            await player.load(dashUrl);
+            console.log("DASH stream cargado correctamente");
+            playerLoaded = true;
+            setupQualityOptions();
+            player.addEventListener("variantchanged", updateCurrentResolution);
+            updateCurrentResolution();
+            qualitySelector.addEventListener("change", handleQualityChange);
+            return;
+          } catch (dashError) {
+            console.error("Error al cargar DASH:", dashError);
+            // Continue to HLS if DASH fails
+          }
+        }
+
+        // Try HLS if available or if DASH failed
+        if (hlsUrl) {
+          try {
+            await player.load(hlsUrl);
+            console.log("HLS stream cargado correctamente");
+            playerLoaded = true;
+            setupQualityOptions();
+            player.addEventListener("variantchanged", updateCurrentResolution);
+            updateCurrentResolution();
+            qualitySelector.addEventListener("change", handleQualityChange);
+            return;
+          } catch (hlsError) {
+            console.error("Error al cargar HLS:", hlsError);
+            throw new Error("No se pudo reproducir el stream");
+          }
+        } else if (!dashUrl) {
+          throw new Error("No hay URLs de streaming disponibles");
+        }
+      } catch (error) {
+        console.error("Error al cargar el medio:", error);
+        throw new Error("Este canal no está disponible en este momento");
+      }
+    }
+
+    // Add keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      // Space bar to play/pause
+      if (e.code === "Space" && document.activeElement.tagName !== "INPUT") {
+        e.preventDefault();
+        if (video.paused) {
+          playButton.click();
+        } else {
+          video.pause();
+        }
+      }
+
+      // F for fullscreen
+      if (e.code === "KeyF" && playerLoaded) {
+        e.preventDefault();
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          videoContainer.requestFullscreen();
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  /* Hide video controls timeline */
+  video::-webkit-media-controls-timeline {
+    display: none;
+  }
+  video::-webkit-media-controls-time-remaining-display {
+    display: none;
+  }
+  video::-webkit-media-controls-current-time-display {
+    display: none;
+  }
+
+  /* Animation for loading spinner */
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  /* Fade in animation for overlays */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  #error-overlay,
+  #loading-overlay {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+</style>
+
+<script
+  is:inline
+  src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.js"
+></script>
+<script define:vars={{ dashUrl, hlsUrl }}>
+  document.addEventListener("DOMContentLoaded", async function () {
+    // Initialize player elements
+    const video = document.getElementById("video");
+    const player = new shaka.Player(video);
+    const qualitySelector = document.getElementById("quality-selector");
+    const currentResolutionEl = document.getElementById("current-resolution");
+    const videoContainer = document.getElementById("video-container");
+    const playOverlay = document.getElementById("play-overlay");
+    const playButton = document.getElementById("play-button");
+    const loadingOverlay = document.getElementById("loading-overlay");
+    const errorOverlay = document.getElementById("error-overlay");
+    const errorMessage = document.getElementById("error-message");
+    const retryButton = document.getElementById("retry-button");
+
+    let playerLoaded = false;
+    let loadAttempts = 0;
+    const MAX_LOAD_ATTEMPTS = 3;
+
+    // Configure Shaka Player with optimized settings
+    player.configure({
+      streaming: {
+        bufferingGoal: 60,
+        rebufferingGoal: 2,
+        bufferBehind: 30,
+        autoplay: false,
+        retryParameters: {
+          maxAttempts: 5,
+          baseDelay: 1000,
+          backoffFactor: 2,
+          fuzzFactor: 0.5,
+        },
+      },
+      abr: {
+        enabled: true,
+        defaultBandwidthEstimate: 1000000, // 1Mbps initial estimate
+      },
+    });
+
+    // Error event listener
+    player.addEventListener("error", (event) => {
+      console.error("Error de Shaka Player:", event.detail);
+      showErrorOverlay(
+        "Error al reproducir el contenido. Código: " + event.detail.code
+      );
+    });
+
+    // Handle play button click
+    playButton.addEventListener("click", () => {
+      if (playerLoaded) {
+        playOverlay.style.display = "none";
+        video.play().catch((err) => {
+          console.error("Error al reproducir:", err);
+          showErrorOverlay("No se pudo iniciar la reproducción");
+        });
+      } else {
+        showLoadingOverlay();
+        tryLoadStream()
+          .then(() => {
+            hideLoadingOverlay();
+            playOverlay.style.display = "none";
+            video.play().catch((err) => {
+              console.error("Error al reproducir después de cargar:", err);
+              showErrorOverlay("No se pudo iniciar la reproducción");
+            });
+          })
+          .catch((err) => {
+            hideLoadingOverlay();
+            showErrorOverlay(err.message || "Error al cargar el stream");
+          });
+      }
+    });
+
+    // Retry button click handler
+    retryButton.addEventListener("click", () => {
+      hideErrorOverlay();
+      showLoadingOverlay();
+      loadAttempts = 0;
+      tryLoadStream()
+        .then(() => {
+          hideLoadingOverlay();
+          playOverlay.style.display = "none";
+          video.play().catch((err) => {
+            console.error("Error al reproducir después de reintentar:", err);
+            showErrorOverlay("No se pudo iniciar la reproducción");
+          });
+        })
+        .catch((err) => {
+          hideLoadingOverlay();
+          showErrorOverlay(err.message || "Error al cargar el stream");
+        });
+    });
+
+    // Video event listeners
+    video.addEventListener("ended", () => {
+      playOverlay.style.display = "flex";
+    });
+
+    video.addEventListener("pause", () => {
+      // Only show play overlay if video is not loading
+      if (!video.seeking && !video.waiting) {
+        playOverlay.style.display = "flex";
+      }
+    });
+
+    video.addEventListener("playing", () => {
+      playOverlay.style.display = "none";
+      hideErrorOverlay();
+      hideLoadingOverlay();
+    });
+
+    video.addEventListener("waiting", () => {
+      if (!playerLoaded) return;
+      showLoadingOverlay();
+    });
+
+    video.addEventListener("canplay", () => {
+      hideLoadingOverlay();
+    });
+
+    // Helper functions for overlays
+    function showLoadingOverlay() {
+      loadingOverlay.style.display = "flex";
+      errorOverlay.style.display = "none";
+    }
+
+    function hideLoadingOverlay() {
+      loadingOverlay.style.display = "none";
+    }
+
+    function showErrorOverlay(message) {
+      errorMessage.textContent = message || "Error desconocido";
+      errorOverlay.style.display = "flex";
+      loadingOverlay.style.display = "none";
+    }
+
+    function hideErrorOverlay() {
+      errorOverlay.style.display = "none";
+    }
+
+    // Setup quality options in selector
+    const setupQualityOptions = () => {
+      const tracks = player.getVariantTracks();
+      const tracksByHeight = {};
+
+      tracks.forEach((track) => {
+        const height = track.height || 0;
+        if (!tracksByHeight[height]) {
+          tracksByHeight[height] = [];
+        }
+        tracksByHeight[height].push(track);
+      });
+
+      // Clear existing options
+      while (qualitySelector.firstChild) {
+        qualitySelector.removeChild(qualitySelector.firstChild);
+      }
+
+      // Add auto option
+      const autoOption = document.createElement("option");
+      autoOption.value = "auto";
+      autoOption.textContent = "Auto (Recomendado)";
+      qualitySelector.appendChild(autoOption);
+
+      // Add quality options sorted by height (highest first)
+      Object.keys(tracksByHeight)
+        .map((height) => parseInt(height))
+        .sort((a, b) => b - a)
+        .forEach((height) => {
+          if (height > 0) {
+            const option = document.createElement("option");
+            const track = tracksByHeight[height][0];
+            option.value = height;
+            option.textContent = `${height}p ${track.bandwidth ? `(${Math.round(track.bandwidth / 1000)} kbps)` : ""}`;
+            qualitySelector.appendChild(option);
+          }
+        });
+
+      // If no quality options were found, show a message
+      if (Object.keys(tracksByHeight).length === 0) {
+        const noOption = document.createElement("option");
+        noOption.value = "none";
+        noOption.textContent = "No hay opciones de calidad disponibles";
+        qualitySelector.appendChild(noOption);
+        qualitySelector.disabled = true;
+      }
+    };
+
+    // Update the current resolution display
+    const updateCurrentResolution = () => {
+      const activeTrack = player.getVariantTracks().find((t) => t.active);
+      if (activeTrack && activeTrack.height) {
+        currentResolutionEl.textContent = `Reproduciendo: ${activeTrack.height}p`;
+        currentResolutionEl.style.display = "inline-block";
+      } else {
+        currentResolutionEl.textContent = "";
+        currentResolutionEl.style.display = "none";
+      }
+    };
+
+    // Handle quality selection change
+    const handleQualityChange = (event) => {
+      const selectedValue = event.target.value;
+      if (selectedValue === "auto") {
+        player.configure("abr.enabled", true);
+      } else if (selectedValue !== "none") {
+        player.configure("abr.enabled", false);
+        const height = parseInt(selectedValue);
+        const tracksWithHeight = player
+          .getVariantTracks()
+          .filter((t) => t.height === height);
+        if (tracksWithHeight.length > 0) {
+          // Select the track with the highest bandwidth for the selected height
+          const bestTrack = tracksWithHeight.reduce((prev, current) =>
+            prev.bandwidth > current.bandwidth ? prev : current
+          );
+          player.selectVariantTrack(bestTrack, true);
+        }
+      }
+    };
+
+    // Try to load the stream with fallback
+    async function tryLoadStream() {
+      if (loadAttempts >= MAX_LOAD_ATTEMPTS) {
+        throw new Error("Se excedió el número máximo de intentos");
+      }
+
+      loadAttempts++;
+
+      try {
+        // First try DASH if available
+        if (dashUrl) {
+          try {
+            await player.load(dashUrl);
+            console.log("DASH stream cargado correctamente");
+            playerLoaded = true;
+            setupQualityOptions();
+            player.addEventListener("variantchanged", updateCurrentResolution);
+            updateCurrentResolution();
+            qualitySelector.addEventListener("change", handleQualityChange);
+            return;
+          } catch (dashError) {
+            console.error("Error al cargar DASH:", dashError);
+            // Continue to HLS if DASH fails
+          }
+        }
+
+        // Try HLS if available or if DASH failed
+        if (hlsUrl) {
+          try {
+            await player.load(hlsUrl);
+            console.log("HLS stream cargado correctamente");
+            playerLoaded = true;
+            setupQualityOptions();
+            player.addEventListener("variantchanged", updateCurrentResolution);
+            updateCurrentResolution();
+            qualitySelector.addEventListener("change", handleQualityChange);
+            return;
+          } catch (hlsError) {
+            console.error("Error al cargar HLS:", hlsError);
+            throw new Error("No se pudo reproducir el stream");
+          }
+        } else if (!dashUrl) {
+          throw new Error("No hay URLs de streaming disponibles");
+        }
+      } catch (error) {
+        console.error("Error al cargar el medio:", error);
+        throw new Error("Este canal no está disponible en este momento");
+      }
+    }
+
+    // Add keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      // Space bar to play/pause
+      if (e.code === "Space" && document.activeElement.tagName !== "INPUT") {
+        e.preventDefault();
+        if (video.paused) {
+          playButton.click();
+        } else {
+          video.pause();
+        }
+      }
+
+      // F for fullscreen
+      if (e.code === "KeyF" && playerLoaded) {
+        e.preventDefault();
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          videoContainer.requestFullscreen();
+        }
+      }
+    });
+  });
+</script>

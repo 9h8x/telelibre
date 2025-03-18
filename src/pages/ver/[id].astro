@@ -1,6 +1,10 @@
 ---
 export const prerender = false;
 import Layout from "@/layouts/Layout.astro";
+import ChannelSidebar from "@/components/player/ChannelSidebar.astro";
+import VideoPlayer from "@/components/player/VideoPlayer.astro";
+import ChannelInfo from "@/components/player/ChannelInfo.astro";
+import ErrorMessage from "@/components/player/ErrorMessage.astro";
 
 // Environment variable handling for both prod and dev
 let SITE_URL;
@@ -13,10 +17,11 @@ if (import.meta.env.PROD) {
   SITE_URL = import.meta.env.SITE_URL;
 }
 
+// Fetch channels data
 const request = await fetch(`${SITE_URL}/api/canales`);
 const canales = await request.json();
 
-const {id} = Astro.params;
+const { id } = Astro.params;
 
 // Validate if the ID is a valid number
 const isValidId = id && !isNaN(parseInt(id));
@@ -24,672 +29,118 @@ const isValidId = id && !isNaN(parseInt(id));
 // Ensure canales is an array
 const esArrayValido = Array.isArray(canales.data);
 const listaCanales = esArrayValido ? canales.data : [];
-const canal = isValidId && esArrayValido
-  ? listaCanales.find((canal) => canal.number === parseInt(id))
-  : null;
+const canal =
+  isValidId && esArrayValido
+    ? listaCanales.find((canal) => canal.number === parseInt(id))
+    : null;
 
 // Verify if the channel has streaming URLs
 const tieneDashUrl = canal?.contentUrls?.dash;
 const tieneHlsUrl = canal?.contentUrls?.hlsFP;
 
-const dashUrl = tieneDashUrl
-  ? canal.contentUrls.dash
-  : null;
-const hlsUrl = tieneHlsUrl
-  ? canal.contentUrls.hlsFP
-  : null;
+const dashUrl = tieneDashUrl ? canal.contentUrls.dash : null;
+const hlsUrl = tieneHlsUrl ? canal.contentUrls.hlsFP : null;
 
 // Find the index of the current channel for auto-scrolling
 const canalIndex = listaCanales.findIndex((c) => c.number === parseInt(id));
 ---
 
 <Layout channel={canal?.displayName}>
-  <div class="container mx-auto py-6 px-4 flex flex-col md:flex-row-reverse gap-6" id="main-container">
-    <!-- Barra lateral con lista de canales (ahora a la derecha) -->
-    <div class="md:w-72 w-full h-full" id="sidebar-container">
-      <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-4 sticky top-4" id="sidebar-content">
-        <h2 class="text-lg font-semibold mb-3 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm11 1H6v8l4-2 4 2V6z" clip-rule="evenodd" />
-          </svg>
-          Todos los Canales
-        </h2>
-        <div class="relative">
-          <input 
-            type="text" 
-            id="channel-search" 
-            placeholder="Buscar canal..." 
-            class="w-full p-2 pl-8 mb-3 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-          />
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 absolute left-2.5 top-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-        <div class="channel-list-container overflow-y-auto pr-1" id="sidebar-channels">
-          <ul class="space-y-1">
-            {listaCanales.map((canal, index) => (
-              <li id={`canal-${canal.number}`} class={`channel-item ${index === canalIndex ? "scroll-target" : ""}`} data-channel-name={canal.displayName.toLowerCase()}>
-                <a 
-                  href={`/ver/${canal.number}`}
-                  class={`flex items-center p-2 rounded-md transition-colors ${
-                    canal.number === parseInt(id) 
-                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium' 
-                      : 'hover:bg-gray-100 dark:hover:bg-slate-700'
-                  }`}
-                >
-                  <div class="w-10 h-10 mr-3 flex-shrink-0 bg-slate-100 dark:bg-slate-700 rounded-md overflow-hidden flex items-center justify-center">
-                    <img 
-                      class="w-full h-full object-contain p-1" 
-                      src={`${canal.logoUrl}`} 
-                      alt={canal.displayName}
-                      loading="lazy"
-                      onerror="this.onerror=null; this.src='/placeholder-channel.svg';"
-                    />
-                  </div>
-                  <div class="flex-1 truncate">
-                    <span class="font-medium">{canal.number}</span>
-                    <span class="ml-1 text-sm text-gray-600 dark:text-gray-400">{canal.displayName}</span>
-                  </div>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- Área de contenido principal -->
+  <div
+    class="container mx-auto py-6 px-4 flex flex-col gap-6"
+    id="main-container"
+  >
+    <!-- Main content area -->
     <div class="flex-1" id="main-content">
-      {!isValidId ? (
-        <div class="py-12 px-4 text-center bg-white dark:bg-slate-800 rounded-lg shadow-md">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h1 class="text-2xl font-bold text-red-600 dark:text-red-500">
-            ID de canal inválido
-          </h1>
-          <p class="mt-2 text-gray-600 dark:text-gray-400">
-            El ID "{id}" no es un número de canal válido. Por favor, selecciona un canal de la lista.
-          </p>
-          <a href="/" class="mt-6 inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-            Volver a Canales
-          </a>
-        </div>
-      ) : canal ? (
-        <div>
-          <div class="mb-6">
-            <a href="/" class="text-blue-600 hover:underline mb-4 inline-flex items-center transition-colors hover:text-blue-800">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      {
+        !isValidId ? (
+          <ErrorMessage
+            title="ID de canal inválido"
+            message={`El ID "${id}" no es un número de canal válido. Por favor, selecciona un canal de la lista.`}
+          />
+        ) : canal ? (
+          <div>
+            <a
+              href="/"
+              class="text-blue-600 hover:underline mb-4 inline-flex items-center transition-colors hover:text-blue-800"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
               </svg>
               Volver a Canales
             </a>
-            
-            <div class="flex items-center mt-3 bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md">
-              <div class="w-16 h-16 rounded-md overflow-hidden bg-slate-100 dark:bg-slate-700 mr-4 flex items-center justify-center">
-                <img 
-                  class="w-full h-full object-contain p-1" 
-                  src={`${canal.logoUrl}`} 
-                  alt={canal.displayName}
-                  onerror="this.onerror=null; this.src='/placeholder-channel.svg';"
-                />
-              </div>
-              <div>
-                <h1 class="text-2xl font-bold">{canal.displayName}</h1>
-                <p class="text-slate-500 dark:text-slate-400">Canal {canal.number}</p>
-                <div class="flex items-center mt-1 text-xs text-slate-500 dark:text-slate-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clip-rule="evenodd" />
-                  </svg>
-                  <span>Haz clic en reproducir para iniciar el video</span>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {tieneDashUrl || tieneHlsUrl ? (
-            <div>
-              <div class="bg-black rounded-lg overflow-hidden shadow-xl relative">
-                <div id="video-container" class="w-full aspect-video relative">
-                  <video id="video" class="w-full h-full" controls></video>
-                  <!-- Play button overlay -->
-                  <div id="play-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 cursor-pointer z-10">
-                    <button id="play-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full flex items-center justify-center transition-all transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span class="ml-2">Reproducir</span>
-                    </button>
-                  </div>
-                  <!-- Loading spinner -->
-                  <div id="loading-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 z-20 hidden">
-                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                  </div>
-                  <!-- Error message overlay -->
-                  <div id="error-overlay" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-80 z-20 hidden">
-                    <div class="text-center p-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-red-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <p class="text-white text-lg font-medium">Canal no disponible</p>
-                      <p class="text-gray-400 mt-1" id="error-message">No se pudo cargar el contenido</p>
-                      <button id="retry-button" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
-                        Intentar de nuevo
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Control de calidad -->
-              <div class="mt-3 bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                  <div class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-                    </svg>
-                    <label for="quality-selector" class="font-medium text-sm whitespace-nowrap">Calidad de Video:</label>
-                  </div>
-                  <select 
-                    id="quality-selector" 
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+            <ChannelInfo canal={canal} />
+
+            {tieneDashUrl || tieneHlsUrl ? (
+              <VideoPlayer
+                dashUrl={dashUrl}
+                hlsUrl={hlsUrl}
+                channelName={canal.displayName}
+              />
+            ) : (
+              <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg shadow-md">
+                <div class="flex">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 mr-2 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <option value="auto">Auto (Recomendado)</option>
-                    <!-- Las opciones se rellenarán con JavaScript -->
-                  </select>
-                  <span id="current-resolution" class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full ml-auto"></span>
-                </div>
-                
-                <div class="mt-3 pt-3 border-t border-gray-200 dark:border-slate-700" id="disclaimer-section">
-                  <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                    <span>No anda fuera de Argentina. Si estás en Argentina y no funciona, probablemente estés bloqueado por los links.</span>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <div>
+                    <p class="font-medium">
+                      No hay URL de streaming disponible para este canal.
+                    </p>
+                    <p class="text-sm mt-1">
+                      Intenta con otro canal o vuelve más tarde.
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg shadow-md">
-              <div class="flex">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div>
-                  <p class="font-medium">No hay URL de streaming disponible para este canal.</p>
-                  <p class="text-sm mt-1">Intenta con otro canal o vuelve más tarde.</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div class="py-12 px-4 text-center bg-white dark:bg-slate-800 rounded-lg shadow-md">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h1 class="text-2xl font-bold text-red-600 dark:text-red-500">
-            Canal con número {id} no encontrado.
-          </h1>
-          <p class="mt-2 text-gray-600 dark:text-gray-400">El canal que estás buscando no existe o no está disponible.</p>
-          <a href="/" class="mt-6 inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-            Volver a Canales
-          </a>
-        </div>
-      )}
+            )}
+          </div>
+        ) : (
+          <ErrorMessage
+            title={`Canal con número ${id} no encontrado.`}
+            message="El canal que estás buscando no existe o no está disponible."
+          />
+        )
+      }
     </div>
+
+    <!-- Sidebar with channel list - now positioned below on mobile -->
+    <ChannelSidebar
+      canales={listaCanales}
+      currentChannelId={parseInt(id)}
+      canalIndex={canalIndex}
+    />
   </div>
 </Layout>
 
 <style>
-  /* Hide video controls timeline */
-  video::-webkit-media-controls-timeline {
-    display: none;
-  }
-  video::-webkit-media-controls-time-remaining-display {
-    display: none;
-  }
-  video::-webkit-media-controls-current-time-display {
-    display: none;
-  }
-  
-  /* Ensure full height for the channel list */
-  html, body {
-    height: 100%;
-    scroll-behavior: smooth;
-  }
-  
-  /* Custom scrollbar for channel list */
-  .channel-list-container {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
-  }
-  
-  .channel-list-container::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  .channel-list-container::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  .channel-list-container::-webkit-scrollbar-thumb {
-    background-color: rgba(156, 163, 175, 0.5);
-    border-radius: 20px;
-  }
-  
-  /* Animation for loading spinner */
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
+  /* Media query for non-mobile devices (tablet and up) */
+  @media (min-width: 768px) {
+    #main-container {
+      flex-direction: row;
     }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  .animate-spin {
-    animation: spin 1s linear infinite;
-  }
-  
-  /* Highlight current channel */
-  .scroll-target a {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .scroll-target a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background-color: #3b82f6;
-  }
-  
-  /* Fade in animation for overlays */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  #error-overlay, #loading-overlay {
-    animation: fadeIn 0.3s ease-in-out;
   }
 </style>
-
-{(tieneDashUrl || tieneHlsUrl) && (
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.3.6/shaka-player.compiled.js"></script>
-  <script is:inline define:vars={{ dashUrl, hlsUrl, canalIndex }}>
-  document.addEventListener('DOMContentLoaded', async function() {
-    const video = document.getElementById('video');
-    const player = new shaka.Player(video);
-    const qualitySelector = document.getElementById('quality-selector');
-    const currentResolutionEl = document.getElementById('current-resolution');
-    const videoContainer = document.getElementById('video-container');
-    const playOverlay = document.getElementById('play-overlay');
-    const playButton = document.getElementById('play-button');
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const errorOverlay = document.getElementById('error-overlay');
-    const errorMessage = document.getElementById('error-message');
-    const retryButton = document.getElementById('retry-button');
-    const channelSearch = document.getElementById('channel-search');
-    const sidebarContainer = document.getElementById('sidebar-container');
-    const sidebarContent = document.getElementById('sidebar-content');
-    const sidebarChannels = document.getElementById('sidebar-channels');
-    const mainContent = document.getElementById('main-content');
-    const disclaimerSection = document.getElementById('disclaimer-section');
-    
-    let playerLoaded = false;
-    let loadAttempts = 0;
-    const MAX_LOAD_ATTEMPTS = 3;
-
-    // Adjust sidebar height to match main content including disclaimer
-    function adjustSidebarHeight() {
-      if (sidebarChannels && mainContent) {
-        const mainContentHeight = mainContent.offsetHeight;
-        
-        // Set the height of the channel list container to match the main content
-        // Subtract the header height to account for the search and title
-        const headerHeight = sidebarContent.offsetHeight - sidebarChannels.offsetHeight;
-        sidebarChannels.style.height = `${Math.max(mainContentHeight - headerHeight, 300)}px`;
-      }
-    }
-
-    // Call this function on load and on window resize
-    adjustSidebarHeight();
-    window.addEventListener('resize', adjustSidebarHeight);
-
-    // Channel search functionality
-    if (channelSearch) {
-      channelSearch.addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase().trim();
-        const channelItems = document.querySelectorAll('.channel-item');
-        
-        channelItems.forEach(item => {
-          const channelName = item.dataset.channelName;
-          const channelNumber = item.id.replace('canal-', '');
-          
-          if (channelName.includes(searchTerm) || channelNumber.includes(searchTerm)) {
-            item.style.display = '';
-          } else {
-            item.style.display = 'none';
-          }
-        });
-      });
-    }
-
-    // Scroll to current channel in sidebar
-    const scrollToCurrentChannel = () => {
-      const target = document.querySelector('.scroll-target');
-      
-      if (sidebarChannels && target) {
-        const containerHeight = sidebarChannels.clientHeight;
-        const targetTop = target.offsetTop;
-        const targetHeight = target.clientHeight;
-        
-        // Scroll with a small delay to ensure DOM is fully rendered
-        setTimeout(() => {
-          sidebarChannels.scrollTop = targetTop - (containerHeight / 2) + (targetHeight / 2);
-        }, 100);
-      }
-    };
-
-    // Call scroll function with a slight delay to ensure DOM is ready
-    setTimeout(() => {
-      scrollToCurrentChannel();
-      adjustSidebarHeight();
-    }, 100);
-
-    // Configure Shaka Player
-    player.configure({
-      streaming: {
-        bufferingGoal: 60,
-        rebufferingGoal: 2,
-        bufferBehind: 30,
-        autoplay: false,
-        retryParameters: {
-          maxAttempts: 5,
-          baseDelay: 1000,
-          backoffFactor: 2,
-          fuzzFactor: 0.5
-        }
-      },
-      abr: {
-        enabled: true,
-        defaultBandwidthEstimate: 1000000 // 1Mbps initial estimate
-      }
-    });
-
-    // Error event listener
-    player.addEventListener('error', (event) => {
-      console.error('Error de Shaka Player:', event.detail);
-      showErrorOverlay('Error al reproducir el contenido. Código: ' + event.detail.code);
-    });
-
-    // Handle play button click
-    playButton.addEventListener('click', () => {
-      if (playerLoaded) {
-        playOverlay.style.display = 'none';
-        video.play().catch(err => {
-          console.error('Error al reproducir:', err);
-          showErrorOverlay('No se pudo iniciar la reproducción');
-        });
-      } else {
-        showLoadingOverlay();
-        tryLoadStream().then(() => {
-          hideLoadingOverlay();
-          playOverlay.style.display = 'none';
-          video.play().catch(err => {
-            console.error('Error al reproducir después de cargar:', err);
-            showErrorOverlay('No se pudo iniciar la reproducción');
-          });
-        }).catch(err => {
-          hideLoadingOverlay();
-          showErrorOverlay(err.message || 'Error al cargar el stream');
-        });
-      }
-    });
-
-    // Retry button click handler
-    retryButton.addEventListener('click', () => {
-      hideErrorOverlay();
-      showLoadingOverlay();
-      loadAttempts = 0;
-      tryLoadStream().then(() => {
-        hideLoadingOverlay();
-        playOverlay.style.display = 'none';
-        video.play().catch(err => {
-          console.error('Error al reproducir después de reintentar:', err);
-          showErrorOverlay('No se pudo iniciar la reproducción');
-        });
-      }).catch(err => {
-        hideLoadingOverlay();
-        showErrorOverlay(err.message || 'Error al cargar el stream');
-      });
-    });
-
-    // Show play overlay when video ends or pauses
-    video.addEventListener('ended', () => {
-      playOverlay.style.display = 'flex';
-    });
-    
-    video.addEventListener('pause', () => {
-      // Only show play overlay if video is not loading
-      if (!video.seeking && !video.waiting) {
-        playOverlay.style.display = 'flex';
-      }
-    });
-    
-    // Hide play overlay when video starts playing
-    video.addEventListener('playing', () => {
-      playOverlay.style.display = 'none';
-      hideErrorOverlay();
-      hideLoadingOverlay();
-    });
-    
-    // Show loading overlay when video is buffering
-    video.addEventListener('waiting', () => {
-      if (!playerLoaded) return;
-      showLoadingOverlay();
-    });
-    
-    // Hide loading overlay when video can play
-    video.addEventListener('canplay', () => {
-      hideLoadingOverlay();
-    });
-
-    // Helper functions for overlays
-    function showLoadingOverlay() {
-      loadingOverlay.style.display = 'flex';
-      errorOverlay.style.display = 'none';
-    }
-    
-    function hideLoadingOverlay() {
-      loadingOverlay.style.display = 'none';
-    }
-    
-    function showErrorOverlay(message) {
-      errorMessage.textContent = message || 'Error desconocido';
-      errorOverlay.style.display = 'flex';
-      loadingOverlay.style.display = 'none';
-    }
-    
-    function hideErrorOverlay() {
-      errorOverlay.style.display = 'none';
-    }
-
-    // Setup quality options in selector
-    const setupQualityOptions = () => {
-      const tracks = player.getVariantTracks();
-      const tracksByHeight = {};
-      
-      tracks.forEach(track => {
-        const height = track.height || 0;
-        if (!tracksByHeight[height]) {
-          tracksByHeight[height] = [];
-        }
-        tracksByHeight[height].push(track);
-      });
-      
-      // Clear existing options
-      while (qualitySelector.firstChild) {
-        qualitySelector.removeChild(qualitySelector.firstChild);
-      }
-      
-      // Add auto option
-      const autoOption = document.createElement('option');
-      autoOption.value = 'auto';
-      autoOption.textContent = 'Auto (Recomendado)';
-      qualitySelector.appendChild(autoOption);
-      
-      // Add quality options sorted by height (highest first)
-      Object.keys(tracksByHeight)
-        .map(height => parseInt(height))
-        .sort((a, b) => b - a)
-        .forEach(height => {
-          if (height > 0) {
-            const option = document.createElement('option');
-            const track = tracksByHeight[height][0];
-            option.value = height;
-            option.textContent = `${height}p ${track.bandwidth ? `(${Math.round(track.bandwidth / 1000)} kbps)` : ''}`;
-            qualitySelector.appendChild(option);
-          }
-        });
-        
-      // If no quality options were found, show a message
-      if (Object.keys(tracksByHeight).length === 0) {
-        const noOption = document.createElement('option');
-        noOption.value = 'none';
-        noOption.textContent = 'No hay opciones de calidad disponibles';
-        qualitySelector.appendChild(noOption);
-        qualitySelector.disabled = true;
-      }
-    };
-
-    // Update the current resolution display
-    const updateCurrentResolution = () => {
-      const activeTrack = player.getVariantTracks().find(t => t.active);
-      if (activeTrack && activeTrack.height) {
-        currentResolutionEl.textContent = `Reproduciendo: ${activeTrack.height}p`;
-        currentResolutionEl.style.display = 'inline-block';
-      } else {
-        currentResolutionEl.textContent = '';
-        currentResolutionEl.style.display = 'none';
-      }
-    };
-
-    // Handle quality selection change
-    const handleQualityChange = (event) => {
-      const selectedValue = event.target.value;
-      if (selectedValue === 'auto') {
-        player.configure('abr.enabled', true);
-      } else if (selectedValue !== 'none') {
-        player.configure('abr.enabled', false);
-        const height = parseInt(selectedValue);
-        const tracksWithHeight = player.getVariantTracks().filter(t => t.height === height);
-        if (tracksWithHeight.length > 0) {
-          // Select the track with the highest bandwidth for the selected height
-          const bestTrack = tracksWithHeight.reduce((prev, current) => 
-            (prev.bandwidth > current.bandwidth ? prev : current));
-          player.selectVariantTrack(bestTrack, true);
-        }
-      }
-    };
-
-    // Try to load the stream with fallback
-    async function tryLoadStream() {
-      if (loadAttempts >= MAX_LOAD_ATTEMPTS) {
-        throw new Error('Se excedió el número máximo de intentos');
-      }
-      
-      loadAttempts++;
-      
-      try {
-        // First try DASH if available
-        if (dashUrl) {
-          try {
-            await player.load(dashUrl);
-            console.log('DASH stream cargado correctamente');
-            playerLoaded = true;
-            setupQualityOptions();
-            player.addEventListener('variantchanged', updateCurrentResolution);
-            updateCurrentResolution();
-            qualitySelector.addEventListener('change', handleQualityChange);
-            return;
-          } catch (dashError) {
-            console.error('Error al cargar DASH:', dashError);
-            // Continue to HLS if DASH fails
-          }
-        }
-
-        // Try HLS if available or if DASH failed
-        if (hlsUrl) {
-          try {
-            await player.load(hlsUrl);
-            console.log('HLS stream cargado correctamente');
-            playerLoaded = true;
-            setupQualityOptions();
-            player.addEventListener('variantchanged', updateCurrentResolution);
-            updateCurrentResolution();
-            qualitySelector.addEventListener('change', handleQualityChange);
-            return;
-          } catch (hlsError) {
-            console.error('Error al cargar HLS:', hlsError);
-            throw new Error('No se pudo reproducir el stream');
-          }
-        } else if (!dashUrl) {
-          throw new Error('No hay URLs de streaming disponibles');
-        }
-      } catch (error) {
-        console.error('Error al cargar el medio:', error);
-        throw new Error('Este canal no está disponible en este momento');
-      }
-    }
-
-    // Initialize player if URLs are available
-    if (dashUrl || hlsUrl) {
-      // Don't auto-load, wait for user to click play
-      console.log('URLs de streaming disponibles, esperando clic para reproducir');
-    } else {
-      showErrorOverlay('No hay URLs de streaming disponibles para este canal');
-    }
-    
-    // Add keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-      // Space bar to play/pause
-      if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT') {
-        e.preventDefault();
-        if (video.paused) {
-          playButton.click();
-        } else {
-          video.pause();
-        }
-      }
-      
-      // F for fullscreen
-      if (e.code === 'KeyF' && playerLoaded) {
-        e.preventDefault();
-        if (document.fullscreenElement) {
-          document.exitFullscreen();
-        } else {
-          videoContainer.requestFullscreen();
-        }
-      }
-    });
-    
-    // Observe changes to the main content to adjust sidebar height
-    const resizeObserver = new ResizeObserver(() => {
-      adjustSidebarHeight();
-    });
-    
-    if (mainContent) {
-      resizeObserver.observe(mainContent);
-    }
-  });
-</script>
-
-)}

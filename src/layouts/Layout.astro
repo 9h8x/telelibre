@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css";
+import { ModeToggle } from "@/components/ModeToggle";
 
 // Define the interface for the component props
 interface Props {
@@ -20,7 +21,7 @@ const metaDescription = channel
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="es" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -50,19 +51,27 @@ const metaDescription = channel
     <title>{channel ? `${channel} en vivo - TeleLibre` : "TeleLibre"}</title>
   </head>
 
-  <body>
-    <header class="text-center py-4">
+  <body class="min-h-screen bg-background text-foreground">
+    <!-- Theme toggle positioned in the top-left corner with padding -->
+    <div class="absolute top-4 left-4 z-50">
+      <ModeToggle client:load />
+    </div>
+
+    <header class="text-center py-4 shadow-sm bg-card">
       <div class="text-4xl">
         <h1 class="text-4xl font-bold !font-sans"><i>TeleLibre</i></h1>
-        <p class="mt-2 text-lg">
+        <p class="mt-2 text-lg text-muted-foreground">
           Proporcionando televisión de forma gratuita y sin anuncios
         </p>
       </div>
-      <div class="w-full bg-blue-500 text-white py-2">
+      <div class="w-full bg-primary py-2 text-primary-foreground">
         <p class="text-center" id="days-since"></p>
       </div>
     </header>
-    <slot />
+
+    <main>
+      <slot />
+    </main>
 
     <script>
       // Function to calculate the days since a given date (in day/month/year format)
@@ -80,6 +89,34 @@ const metaDescription = channel
       // Update the text with the number of days
       document.getElementById("days-since").textContent =
         `Dias desde el lanzamiento: ${daysSince("14/03/2025")}`;
+    </script>
+
+    <script is:inline>
+      // This script initializes the theme
+      const getThemePreference = () => {
+        if (
+          typeof localStorage !== "undefined" &&
+          localStorage.getItem("theme")
+        ) {
+          return localStorage.getItem("theme");
+        }
+        return window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      };
+      const isDark = getThemePreference() === "dark";
+      document.documentElement.classList[isDark ? "add" : "remove"]("dark");
+
+      if (typeof localStorage !== "undefined") {
+        const observer = new MutationObserver(() => {
+          const isDark = document.documentElement.classList.contains("dark");
+          localStorage.setItem("theme", isDark ? "dark" : "light");
+        });
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["class"],
+        });
+      }
     </script>
   </body>
 </html>
